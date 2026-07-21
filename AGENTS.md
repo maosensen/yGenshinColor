@@ -44,14 +44,14 @@ src/
 ├── app/
 │   ├── (app)/                # Route group wrapped by the dashboard shell
 │   │   ├── layout.tsx        # Mounts <AppSidebar> (sidebar + header shell)
-│   │   ├── page.tsx          # / — analytics dashboard
-│   │   └── charts/           # /charts/line, /charts/bar
+│   │   ├── page.tsx          # / — blank home page (placeholder)
+│   │   └── changelog/        # /changelog — curated release notes
 │   ├── layout.tsx            # Root layout (fonts, <Providers>)
 │   └── globals.css           # Tailwind v4 + theme tokens (single CSS source)
 ├── assets/logo/              # Logo component (theme-token driven)
 ├── components/
 │   ├── ui/                   # shadcn components — edit freely
-│   ├── shadcn-space/blocks/  # Dashboard blocks (sidebar, header, charts, tables)
+│   ├── shadcn-space/blocks/  # Dashboard shell blocks (sidebar, nav, header)
 │   ├── providers.tsx         # Root provider stack (QueryClient → Theme)
 │   ├── theme-provider.tsx
 │   └── theme-toggle.tsx      # Light/dark toggle (next-themes)
