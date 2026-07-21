@@ -1,15 +1,11 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/assets/logo/logo";
 import { navData } from "@/components/shadcn-space/blocks/dashboard-shell-01/nav-data";
 import { NavMain } from "@/components/shadcn-space/blocks/dashboard-shell-01/nav-main";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -86,35 +82,6 @@ const AppSidebar = () => {
       <SidebarContent className="gap-0 px-4 group-data-[collapsible=icon]:px-2">
         <NavMain items={navData} />
       </SidebarContent>
-
-      <SidebarFooter className="px-4 pb-4 group-data-[collapsible=icon]:hidden">
-        <Card className="shadow-none ring-0 bg-primary/10 px-4 py-6">
-          <CardContent className="p-0 flex flex-col gap-3 items-center">
-            <Image
-              src="https://images.shadcnspace.com/assets/backgrounds/download-img.png"
-              alt="sidebar-img"
-              width={80}
-              height={80}
-              className="h-20 w-20"
-            />
-            <div className="flex flex-col gap-4 items-center">
-              <div>
-                {/* Sidebar tokens (not card/muted) so the copy stays readable
-                    on the dark "apparent" sidebar surface. */}
-                <p className="text-base font-semibold text-sidebar-foreground text-center">
-                  Grab Pro Now
-                </p>
-                <p className="text-sm font-regular text-sidebar-foreground/60 text-center">
-                  Customize your admin
-                </p>
-              </div>
-              <Button className="w-fit px-4 py-2 shadow-none cursor-pointer rounded-xl bg-primary font-medium hover:bg-primary/80 h-9">
-                Get Premium
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </SidebarFooter>
     </Sidebar>
   );
 };
