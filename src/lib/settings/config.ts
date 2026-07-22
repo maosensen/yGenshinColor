@@ -114,13 +114,16 @@ export type SettingsValues = {
 export const DEFAULT_SETTINGS: SettingsValues = {
   contrast: false,
   compact: false,
-  maxWidth: false,
+  // Showcase pages always box and center their content.
+  maxWidth: true,
   navLayout: "vertical",
   // Matches Minimals: blended (light) nav by default; "apparent" opts into
   // the distinct dark surface.
   navColor: "integrate",
   preset: "blue",
-  neutral: "zinc",
+  // Site tone: slate's blue-grey neutral (hue 257, tint 2.8) is the showcase
+  // base — a deep grey-blue in dark mode instead of zinc's near-black.
+  neutral: "slate",
   radius: 0.625,
   customHex: null,
   customVars: null,

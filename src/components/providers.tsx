@@ -12,10 +12,12 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Dark is the product default (swatches read best on a deep ground);
+          light mode is repositioned as a "white preview" feature, not a
+          preference, so system preference is not followed. */}
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
+        defaultTheme="dark"
         disableTransitionOnChange
       >
         <SettingsEffect />

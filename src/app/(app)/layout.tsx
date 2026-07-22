@@ -1,25 +1,26 @@
 import type { ReactNode } from "react";
-import { SettingsDrawer } from "@/components/settings/settings-drawer";
-import { AppShell } from "@/components/shadcn-space/blocks/dashboard-shell-01/app-shell";
+import { SiteNav } from "@/components/showcase/site-nav";
 
 /**
- * Application shell layout.
- *
- * Every route inside the `(app)` group is rendered inside the shell, whose
- * skeleton (vertical / mini sidebar or horizontal top-bar) is chosen by the
- * `navLayout` setting. Marketing / auth pages can live outside this group to
- * opt out of the shell.
- *
- * `SettingsDrawer` is mounted as a sibling of `AppShell` (not inside it) so
- * switching nav layout — which remounts the shell — never tears the open
- * drawer down. Its open state lives in the UI store; the header only renders
- * the trigger.
+ * Showcase layout: sticky top nav, content, and the fan-project disclaimer
+ * footer. Replaces the dashboard shell — this site is a gallery, not an
+ * admin app.
  */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <>
-      <AppShell>{children}</AppShell>
-      <SettingsDrawer />
-    </>
+    <div className="flex min-h-svh flex-col">
+      <SiteNav />
+      <main className="flex-1">{children}</main>
+      <footer className="border-t">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 text-xs leading-relaxed text-muted-foreground">
+          <p>
+            Teyvat Palette
+            是非官方、非商业的开源粉丝项目,遵循米哈游《二次创作指引》。
+            《原神》及相关素材 © miHoYo /
+            HoYoverse。本站色卡与渐变为独立提取的学习性内容。
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 }
