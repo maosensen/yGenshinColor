@@ -6,7 +6,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "画廊" },
+  { href: "/", label: "Studio" },
+  { href: "/scenes", label: "场景库" },
   { href: "/changelog", label: "Changelog" },
 ];
 

@@ -3,7 +3,7 @@ import { AppHeader } from "@/components/app-header";
 import { PageContainer } from "@/components/page-container";
 import { type ChangeKind, changelog } from "@/lib/changelog";
 import { cn } from "@/lib/utils";
-import pkg from "../../../../package.json";
+import pkg from "../../../../../package.json";
 
 export const metadata: Metadata = {
   title: "Changelog",

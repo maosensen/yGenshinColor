@@ -235,6 +235,36 @@ body::after {
   }
 }
 
+/* Studio mesh blobs: blurred color pools drifting on a slow loop. Geometry
+   (position / size / timing) comes inline from the background component. */
+.mesh-blob {
+  position: absolute;
+  border-radius: 9999px;
+  /* Panel thumbnails override --blob-blur so small previews stay legible. */
+  filter: blur(var(--blob-blur, 70px));
+  will-change: transform;
+  animation-name: mesh-blob-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes mesh-blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6%, -9%) scale(1.15);
+  }
+  66% {
+    transform: translate(-8%, 7%) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mesh-blob {
+    animation: none;
+  }
+}
+
 /* -------------------------------------------------------------------------- */
 /*                          Settings panel overrides                          */
 /*                                                                            */
