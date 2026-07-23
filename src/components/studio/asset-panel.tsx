@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useMemo, useRef } from "react";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 import { extractPalette } from "@/lib/extract-palette";
 import { useStudioStore } from "@/lib/stores/studio-store";
 import {
@@ -21,6 +22,14 @@ const COLUMNS: Record<AssetCategory, number> = {
   character: 1,
   "tcg-card": 2,
   "name-card": 1,
+};
+
+/** Small line icon per category, shown in the segmented tabs. */
+const CATEGORY_ICONS: Record<AssetCategory, string> = {
+  scene: "icon-[solar--gallery-wide-linear]",
+  character: "icon-[solar--user-rounded-linear]",
+  "tcg-card": "icon-[solar--layers-minimalistic-linear]",
+  "name-card": "icon-[solar--user-id-linear]",
 };
 
 const PANEL_INNER_WIDTH = 264; // w-72 (288) minus px-3 padding (24)
@@ -68,8 +77,13 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
               "absolute top-4 bottom-4 left-4 z-20 flex w-72 flex-col",
             )}
           >
-            <PanelHeader title="素材" onCollapse={toggle} />
-            <div className="grid grid-cols-4 gap-1 px-3 pb-2">
+            <PanelHeader
+              icon="icon-[solar--gallery-wide-bold-duotone]"
+              title="素材"
+              meta={`${items.length}`}
+              onCollapse={toggle}
+            />
+            <div className="mx-3 mb-2 grid grid-cols-4 gap-0.5 rounded-lg bg-muted/40 p-0.5">
               {(
                 Object.entries(ASSET_CATEGORIES) as [
                   AssetCategory,
@@ -81,13 +95,27 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
                   type="button"
                   onClick={() => setCategory(key)}
                   className={cn(
-                    "cursor-pointer rounded-lg py-1.5 text-xs transition-colors",
+                    "relative cursor-pointer rounded-md py-1.5 text-xs transition-colors",
                     category === key
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {def.label}
+                  {category === key && (
+                    <motion.span
+                      layoutId="asset-category-thumb"
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="absolute inset-0 rounded-md bg-primary"
+                      aria-hidden
+                    />
+                  )}
+                  <span className="relative flex items-center justify-center gap-1">
+                    <span
+                      className={cn(CATEGORY_ICONS[key], "size-3.5")}
+                      aria-hidden
+                    />
+                    {def.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -122,7 +150,7 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
       {!open && (
         <PanelOpener
           side="left"
-          label="打开素材栏"
+          label="素材"
           icon="icon-[solar--gallery-wide-bold-duotone]"
           onClick={toggle}
         />
@@ -133,6 +161,7 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
 
 function AssetCard({ asset }: { asset: StudioAsset }) {
   const selected = useStudioStore((s) => s.assetId === asset.id);
+  const extracting = useStudioStore((s) => s.extracting && selected);
   const selectAsset = useStudioStore((s) => s.selectAsset);
   const setExtracting = useStudioStore((s) => s.setExtracting);
   const setPalette = useStudioStore((s) => s.setPalette);
@@ -152,7 +181,7 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
   return (
     <div
       className={cn(
-        "group relative min-w-0 flex-1 overflow-hidden rounded-xl ring-1 ring-border transition-transform duration-200 hover:scale-[1.015]",
+        "group relative min-w-0 flex-1 overflow-hidden rounded-xl bg-muted/40 ring-1 ring-border transition-[transform,box-shadow] duration-200 hover:scale-[1.015] hover:shadow-lg/20",
         selected && "ring-2 ring-primary",
       )}
     >
@@ -169,9 +198,42 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
         onClick={pick}
         className="absolute inset-0 cursor-pointer"
       />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2.5 pt-6 pb-1.5 text-left text-xs text-white">
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 pt-6 pb-1.5 text-left text-white text-xs">
         {asset.name}
       </span>
+
+      {/* Selected check — pops in, sits above the name strip. */}
+      <AnimatePresence>
+        {selected && !extracting && (
+          <motion.span
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="pointer-events-none absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+          >
+            <span
+              className="icon-[solar--check-circle-bold] size-4"
+              aria-hidden
+            />
+          </motion.span>
+        )}
+      </AnimatePresence>
+
+      {/* Extraction veil over the picked card. */}
+      <AnimatePresence>
+        {extracting && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[2px]"
+          >
+            <Spinner className="size-5 text-white" />
+          </motion.span>
+        )}
+      </AnimatePresence>
+
       <button
         type="button"
         aria-label={`预览 ${asset.name} 原图`}

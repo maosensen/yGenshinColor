@@ -29,6 +29,8 @@ type StudioState = {
   bgPanelOpen: boolean;
   /** Asset id currently shown in the full-size preview dialog. */
   previewAssetId: string | null;
+  /** Immersive mode: hide every floating panel and enjoy the canvas. */
+  immersive: boolean;
   setCategory: (category: AssetCategory) => void;
   selectAsset: (assetId: string) => void;
   setPalette: (palette: ExtractedColor[]) => void;
@@ -37,6 +39,7 @@ type StudioState = {
   toggleAssetPanel: () => void;
   toggleBgPanel: () => void;
   setPreviewAsset: (assetId: string | null) => void;
+  toggleImmersive: () => void;
 };
 
 export const useStudioStore = create<StudioState>((set) => ({
@@ -48,6 +51,7 @@ export const useStudioStore = create<StudioState>((set) => ({
   assetPanelOpen: true,
   bgPanelOpen: true,
   previewAssetId: null,
+  immersive: false,
   setCategory: (category) => set({ category }),
   selectAsset: (assetId) => set({ assetId }),
   setPalette: (palette) => set({ palette, extracting: false }),
@@ -56,4 +60,5 @@ export const useStudioStore = create<StudioState>((set) => ({
   toggleAssetPanel: () => set((s) => ({ assetPanelOpen: !s.assetPanelOpen })),
   toggleBgPanel: () => set((s) => ({ bgPanelOpen: !s.bgPanelOpen })),
   setPreviewAsset: (previewAssetId) => set({ previewAssetId }),
+  toggleImmersive: () => set((s) => ({ immersive: !s.immersive })),
 }));
