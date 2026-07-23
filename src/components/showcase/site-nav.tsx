@@ -5,10 +5,19 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
+// Every nav glyph comes from the Solar set so the header reads as one family.
 const links = [
-  { href: "/", label: "Studio" },
-  { href: "/scenes", label: "场景库" },
-  { href: "/changelog", label: "Changelog" },
+  { href: "/", label: "Studio", icon: "icon-[solar--pallete-2-linear]" },
+  {
+    href: "/scenes",
+    label: "场景库",
+    icon: "icon-[solar--gallery-wide-linear]",
+  },
+  {
+    href: "/changelog",
+    label: "Changelog",
+    icon: "icon-[solar--document-text-linear]",
+  },
 ];
 
 /**
@@ -37,12 +46,13 @@ export function SiteNav() {
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-full px-3.5 py-1.5 text-sm transition-colors",
+                "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition-colors",
                 pathname === link.href
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
+              <span className={cn(link.icon, "size-4")} aria-hidden />
               {link.label}
             </Link>
           ))}

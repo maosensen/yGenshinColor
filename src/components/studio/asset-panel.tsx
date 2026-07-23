@@ -72,6 +72,15 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
   useEffect(() => {
     virtualizer.measure();
   }, [virtualizer, category]);
+  // A tab that loads in the background measures a 0-height scroll container
+  // and renders no rows; re-measure when the page becomes visible again.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") virtualizer.measure();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [virtualizer]);
 
   return (
     <>
@@ -129,9 +138,11 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
                 </button>
               ))}
             </div>
+            {/* pt-1 keeps the first row's (2px) selection ring inside the
+                scroll clip instead of shaving its top edge. */}
             <div
               ref={scrollRef}
-              className="min-h-0 flex-1 overflow-y-auto px-3 pb-3"
+              className="min-h-0 flex-1 overflow-y-auto px-3 pt-1 pb-3"
             >
               <div
                 className="relative w-full"

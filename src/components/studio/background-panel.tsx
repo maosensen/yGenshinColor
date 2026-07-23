@@ -47,8 +47,9 @@ export function BackgroundPanel() {
               Previews follow the current palette
             </p>
             {/* Same card grammar as the asset panel: media block + caption
-                line below (name left, origin right) — no bar over the art. */}
-            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 pb-3">
+                line below (name left, origin right) — no bar over the art.
+                pt-1 keeps the first card's selection ring inside the clip. */}
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 pt-1 pb-3">
               {BACKGROUNDS.map((bg) => {
                 const active = backgroundId === bg.id;
                 return (
