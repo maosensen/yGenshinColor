@@ -35,6 +35,40 @@ export type ChangelogRelease = {
 /** Newest first. */
 export const changelog: ChangelogRelease[] = [
   {
+    version: "0.2.1",
+    date: "2026-07-23",
+    title: "The studio grows up",
+    summary:
+      "Eight React Bits backgrounds join the preset roster, the palette learns what its core color is, and a big performance fix makes everything smooth.",
+    changes: [
+      {
+        kind: "new",
+        title: "React Bits backgrounds",
+        text: "Liquid Ether, Ferrofluid, Lightfall, Dark Veil, Light Pillar, Silk, Floating Lines, and Side Rays — each painting from your extracted palette.",
+      },
+      {
+        kind: "new",
+        title: "Core theme color",
+        text: "Extraction flags the palette's strongest voice; it drives hue-based presets and seeds the color picks for everything else.",
+      },
+      {
+        kind: "new",
+        title: "Immersive mode",
+        text: "Hide every panel with one click and enjoy the canvas full-screen — Esc brings the tools back.",
+      },
+      {
+        kind: "improved",
+        title: "Cleaner palette",
+        text: "Near-white and near-black areas (card frames, dark skies) no longer waste palette slots, and the bar can copy all hex values or a CSS gradient at once.",
+      },
+      {
+        kind: "fixed",
+        title: "Performance",
+        text: "Animated backgrounds now render at native 1x resolution instead of Retina 2x, removing the page-wide lag on large screens.",
+      },
+    ],
+  },
+  {
     version: "0.2.0",
     date: "2026-07-23",
     title: "Welcome to Teyvat Palette",

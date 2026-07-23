@@ -6,6 +6,52 @@ project uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-23
+
+The studio workbench grows up: React Bits backgrounds, a smarter palette,
+and a big performance fix.
+
+### Added
+
+- **React Bits background presets** — eight WebGL backgrounds adapted to the
+  palette contract: Liquid Ether, Ferrofluid, Lightfall, Dark Veil, Light
+  Pillar, Silk, Floating Lines, and Side Rays (vendored under MIT with origin
+  badges). The picker shows lightweight CSS thumbnails so the page never
+  holds more than one GL context.
+- **Core theme color** — extraction now flags the palette's "voice"
+  (saturation × pixel share); it gets a highlight ring in the palette bar,
+  hue-driven presets (Dark Veil) rotate to it, and multi-color presets seed
+  their picks with it via a max-min greedy picker in OKLab.
+- **Palette curation** — near-white / near-black clusters (card frames,
+  letterboxes) are dropped before the five most-voiced colors are kept.
+- **Immersive mode** — tuck every panel away to enjoy the canvas; Esc or the
+  floating button brings them back.
+- **Palette bar actions** — copy any swatch, all hex values, or a ready-made
+  CSS gradient, with inline copied feedback and a source credit for the
+  picked asset.
+- **Monochrome chrome** — a new "mono" preset (default) keeps the UI
+  black/white/grey so the scene palette is the only color voice; stored
+  color presets migrate automatically.
+
+### Changed
+
+- Studio UI copy is now English; the site nav follows the yStage header
+  conventions (sliding active pill, Solar glyphs, real GitHub brand mark).
+- Both floating panels share one card grammar — media block with a caption
+  line below, nothing overlaid on the artwork — plus a film-grain canvas
+  overlay and refined glass chrome.
+
+### Fixed
+
+- **Performance** — GL presets rendered at up to 2x device pixel ratio over
+  the full viewport (~4x the pixels of the React Bits demo boxes); they now
+  render at an effective 1x, panel glass blurs less, and the preset
+  crossfade halves, together removing the page-wide jank.
+- Virtual asset list no longer overlaps rows after switching categories,
+  and the first card's selection ring is no longer clipped.
+- Pages loaded in a background tab no longer strand the canvas and panels
+  in a transparent state.
+
 ## [0.2.0] - 2026-07-23
 
 The template becomes a product: **Teyvat Palette** — a fan-made, non-commercial
@@ -98,7 +144,8 @@ First release — a themeable Next.js dashboard template.
 - **Changelog page** — curated release notes on a timeline at `/changelog`,
   rendered from a typed changelog module.
 
-[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/maosensen/yGenshinColor/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/maosensen/yGenshinColor/releases/tag/v0.2.0
 [0.1.2]: https://github.com/maosensen/yTemplate/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/maosensen/yTemplate/compare/v0.1.0...v0.1.1
