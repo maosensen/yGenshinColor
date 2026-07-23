@@ -1,6 +1,6 @@
-# Release card — yTemplate
+# Release card — Teyvat Palette (yGenshinColor)
 
-<!-- 由 release skill 生成于 2026-07-10;发版流程见 user 级 release skill,本卡只记录项目特异性事实。 -->
+<!-- 由 release skill 生成于 2026-07-10(yTemplate 时代),2026-07-23 随 v0.2.0 校正为本仓库事实;发版流程见 user 级 release skill,本卡只记录项目特异性事实。 -->
 
 ## 版本文件(bump 时全部同步)
 
@@ -23,5 +23,6 @@
 
 ## 本项目特有注意事项
 
-- **分支策略**:日常开发在 `dev`,发版时 merge 进 `main`(默认分支,沿用 "Merge branch 'dev': <summary>" 风格),tag 打在 main 上;发完回到 dev。
+- **分支策略**:本仓库直接在 `main` 开发,tag 打在 main 上(yTemplate 的 dev→main 流程不适用)。
+- 历史沿革:仓库由 yTemplate 0.1.2 复制而来,v0.1.x 的 tag 只存在于 yTemplate 仓库;本仓库首个 tag 为 v0.2.0,CHANGELOG 旧条目链接仍指向 yTemplate。
 - 用户常驻 `next dev`(端口 3005):Next 16 拒绝同项目第二个 dev 实例,验证页面直接 curl 3005 的 SSR 产物即可。

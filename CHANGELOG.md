@@ -1,10 +1,48 @@
 # Changelog
 
-All notable changes to yTemplate are documented here. The format is based on
-[Keep a Changelog](https://keepachangelog.com/); this project uses
-[semantic versioning](https://semver.org/).
+All notable changes to Teyvat Palette (yGenshinColor) are documented here. The
+format is based on [Keep a Changelog](https://keepachangelog.com/); this
+project uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-07-23
+
+The template becomes a product: **Teyvat Palette** — a fan-made, non-commercial
+studio for learning color design from Genshin Impact art.
+
+### Added
+
+- **Background Studio workbench** (home page) — pick a Genshin asset, its
+  palette drives a switchable animated background on a full-viewport canvas:
+  - Asset toolbar: scene / character / TCG-card / name-card categories,
+    virtualized lists (TanStack Virtual), `next/image` thumbnails, and a
+    full-size preview dialog; assets auto-register from
+    `public/geshin-pics/<category>/` at build time.
+  - In-browser palette extraction: OKLab k-means with deterministic seeding —
+    the same image always yields the same five swatches.
+  - Background preset registry with a uniform `({ palette })` contract:
+    linear axis, radial mesh, and an animated radial mesh (pure-CSS drifting
+    blobs); presets show live neutral-grey thumbnails and origin badges.
+  - Click-to-copy palette bar and collapsible frosted-glass panels.
+- **Scene study library** (`/scenes`) — five hand-tuned Teyvat scene studies
+  with a drifting gradient hero, a click-to-copy OKLCH palette strip,
+  "why it works" color analysis, and CSS variables / Tailwind v4 / SVG
+  exports; opening a scene re-themes the whole page from its palette.
+- **Showcase identity** — dark-by-default deep grey-blue tone, film-grain
+  overlay, and a display serif pairing (Playfair Display + Noto Serif SC).
+
+### Changed
+
+- Repositioned from a personal dashboard template (yTemplate) to Teyvat
+  Palette; the dashboard sidebar shell is replaced by a top-nav showcase
+  layout with a fan-project disclaimer footer on content pages.
+
+### Removed
+
+- All template demo content: chart pages, gridstack board and demos, avatar
+  and display-card galleries, the example zustand store, the sidebar promo
+  card, and the `gridstack` dependency.
 
 ## [0.1.2] - 2026-07-16
 
@@ -60,7 +98,8 @@ First release — a themeable Next.js dashboard template.
 - **Changelog page** — curated release notes on a timeline at `/changelog`,
   rendered from a typed changelog module.
 
-[Unreleased]: https://github.com/maosensen/yTemplate/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/maosensen/yGenshinColor/releases/tag/v0.2.0
 [0.1.2]: https://github.com/maosensen/yTemplate/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/maosensen/yTemplate/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/maosensen/yTemplate/releases/tag/v0.1.0

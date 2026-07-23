@@ -35,6 +35,40 @@ export type ChangelogRelease = {
 /** Newest first. */
 export const changelog: ChangelogRelease[] = [
   {
+    version: "0.2.0",
+    date: "2026-07-23",
+    title: "Welcome to Teyvat Palette",
+    summary:
+      "The template becomes a product — a fan-made studio for learning color design from Genshin Impact art, with a background workbench at its heart.",
+    changes: [
+      {
+        kind: "new",
+        title: "Background Studio",
+        text: "Pick a Genshin asset and its extracted palette drives a full-screen animated background — switch between linear, radial-mesh, and drifting-mesh presets.",
+      },
+      {
+        kind: "new",
+        title: "Palette extraction",
+        text: "Five swatches are clustered from the picked image right in the browser (OKLab k-means), shown in a click-to-copy palette bar.",
+      },
+      {
+        kind: "new",
+        title: "Asset library",
+        text: "Scene, character, TCG-card, and name-card categories with smooth virtualized lists, thumbnails, and a full-size preview dialog.",
+      },
+      {
+        kind: "new",
+        title: "Scene studies",
+        text: "Five hand-tuned Teyvat scenes with gradient heroes, color analysis notes, and CSS / Tailwind / SVG exports — each scene re-themes the page from its own palette.",
+      },
+      {
+        kind: "improved",
+        title: "Showcase identity",
+        text: "Dark-by-default deep grey-blue tone with film grain and display serif headings; template demo pages are gone.",
+      },
+    ],
+  },
+  {
     version: "0.1.2",
     date: "2026-07-16",
     title: "Make the board yours",
