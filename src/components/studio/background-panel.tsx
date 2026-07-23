@@ -52,6 +52,7 @@ export function BackgroundPanel() {
             <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 pt-1 pb-3">
               {BACKGROUNDS.map((bg) => {
                 const active = backgroundId === bg.id;
+                const Thumb = bg.Thumbnail ?? bg.Component;
                 return (
                   <button
                     key={bg.id}
@@ -68,7 +69,7 @@ export function BackgroundPanel() {
                       style={PREVIEW_STYLE}
                     >
                       <span className="pointer-events-none absolute inset-0">
-                        <bg.Component palette={previewPalette} />
+                        <Thumb palette={previewPalette} />
                       </span>
                       <AnimatePresence>
                         {active && (

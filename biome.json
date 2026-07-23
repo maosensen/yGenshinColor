@@ -36,6 +36,27 @@
   },
   "overrides": [
     {
+      "includes": ["src/components/studio/backgrounds/vendor/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useExhaustiveDependencies": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "suspicious": {
+            "noAssignInExpressions": "off",
+            "noExplicitAny": "off"
+          },
+          "complexity": {
+            "noForEach": "off",
+            "useOptionalChain": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/components/ui/**"],
       "linter": {
         "rules": {

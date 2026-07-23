@@ -20,6 +20,12 @@ export type BackgroundDef = {
   /** Origin badge, e.g. "Built-in" or "React Bits". */
   source: string;
   Component: ComponentType<BackgroundProps>;
+  /**
+   * Lightweight stand-in rendered in the picker panel. Required for WebGL
+   * presets — the panel would otherwise mount one GL context per card;
+   * CSS-only presets omit it and the panel renders Component live.
+   */
+  Thumbnail?: ComponentType<BackgroundProps>;
 };
 
 /** Neutral greys used to render the panel thumbnails uniformly. */
