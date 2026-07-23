@@ -3,7 +3,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { extractPalette } from "@/lib/extract-palette";
@@ -33,6 +33,9 @@ const CATEGORY_ICONS: Record<AssetCategory, string> = {
 };
 
 const PANEL_INNER_WIDTH = 264; // w-72 (288) minus px-3 padding (24)
+const ROW_GAP = 8;
+/** Height of the caption line under each image. */
+const CAPTION_HEIGHT = 26;
 
 export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
   const category = useStudioStore((s) => s.category);
@@ -54,14 +57,21 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
   }, [items, columns]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const cellWidth = (PANEL_INNER_WIDTH - (columns - 1) * 8) / columns;
-  const rowHeight = cellWidth / ASSET_CATEGORIES[category].aspect;
+  const cellWidth = (PANEL_INNER_WIDTH - (columns - 1) * ROW_GAP) / columns;
+  const rowHeight =
+    cellWidth / ASSET_CATEGORIES[category].aspect + CAPTION_HEIGHT;
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => rowHeight + 8,
+    estimateSize: () => rowHeight + ROW_GAP,
     overscan: 4,
   });
+  // estimateSize is captured at mount — switching category changes the row
+  // height, so drop the cached measurements or rows overlap.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: category is the trigger, not a value read inside
+  useEffect(() => {
+    virtualizer.measure();
+  }, [virtualizer, category]);
 
   return (
     <>
@@ -179,72 +189,88 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
   };
 
   return (
-    <div
-      className={cn(
-        "group relative min-w-0 flex-1 overflow-hidden rounded-xl bg-muted/40 ring-1 ring-border transition-[transform,box-shadow] duration-200 hover:scale-[1.015] hover:shadow-lg/20",
-        selected && "ring-2 ring-primary",
-      )}
-    >
-      <Image
-        src={asset.src}
-        alt={asset.name}
-        fill
-        sizes="280px"
-        className="object-cover"
-      />
-      <button
-        type="button"
-        aria-label={`Select ${asset.name}`}
-        onClick={pick}
-        className="absolute inset-0 cursor-pointer"
-      />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-2.5 pt-6 pb-1.5 text-left text-white text-xs">
-        {asset.name}
-      </span>
-
-      {/* Selected check — pops in, sits above the name strip. */}
-      <AnimatePresence>
-        {selected && !extracting && (
-          <motion.span
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="pointer-events-none absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
-          >
-            <span
-              className="icon-[solar--check-circle-bold] size-4"
-              aria-hidden
-            />
-          </motion.span>
+    // Image on top, caption below — nothing overlays the artwork, so names
+    // never fight the image for contrast and can't be covered by neighbors.
+    <div className="group flex min-w-0 flex-1 flex-col">
+      <div
+        className={cn(
+          "relative min-h-0 flex-1 overflow-hidden rounded-lg bg-muted/40 ring-1 ring-border transition-shadow duration-200 group-hover:ring-foreground/25",
+          selected && "ring-2 ring-primary group-hover:ring-primary",
         )}
-      </AnimatePresence>
+      >
+        <Image
+          src={asset.src}
+          alt={asset.name}
+          fill
+          sizes="280px"
+          className="object-cover"
+        />
+        <button
+          type="button"
+          aria-label={`Select ${asset.name}`}
+          onClick={pick}
+          className="absolute inset-0 cursor-pointer"
+        />
 
-      {/* Extraction veil over the picked card. */}
-      <AnimatePresence>
-        {extracting && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[2px]"
-          >
-            <Spinner className="size-5 text-white" />
-          </motion.span>
-        )}
-      </AnimatePresence>
+        {/* Selected check. */}
+        <AnimatePresence>
+          {selected && !extracting && (
+            <motion.span
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="pointer-events-none absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+            >
+              <span
+                className="icon-[solar--check-circle-bold] size-4"
+                aria-hidden
+              />
+            </motion.span>
+          )}
+        </AnimatePresence>
 
-      <button
-        type="button"
-        aria-label={`Preview ${asset.name} full size`}
-        onClick={() => setPreviewAsset(asset.id)}
-        className="absolute top-1.5 right-1.5 flex size-6 cursor-pointer items-center justify-center rounded-full bg-black/35 text-white/85 opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/55 group-hover:opacity-100"
+        {/* Extraction veil over the picked card. */}
+        <AnimatePresence>
+          {extracting && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[2px]"
+            >
+              <Spinner className="size-5 text-white" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        <button
+          type="button"
+          aria-label={`Preview ${asset.name} full size`}
+          onClick={() => setPreviewAsset(asset.id)}
+          className="absolute top-1.5 right-1.5 flex size-6 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white/90 opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/60 group-hover:opacity-100"
+        >
+          <span
+            className="icon-[solar--magnifer-zoom-in-linear] size-3.5"
+            aria-hidden
+          />
+        </button>
+      </div>
+
+      <div
+        className="flex shrink-0 items-center px-0.5"
+        style={{ height: CAPTION_HEIGHT }}
       >
         <span
-          className="icon-[solar--magnifer-zoom-in-linear] size-3.5"
-          aria-hidden
-        />
-      </button>
+          className={cn(
+            "truncate text-[11px] transition-colors",
+            selected ? "font-medium text-foreground" : "text-muted-foreground",
+          )}
+          title={asset.name}
+        >
+          {asset.name}
+        </span>
+      </div>
     </div>
   );
 }

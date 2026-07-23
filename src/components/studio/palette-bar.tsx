@@ -65,12 +65,15 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
           <>
             {asset && (
               <>
-                <div className="flex max-w-36 flex-col gap-0.5 px-2">
-                  <span className="font-mono text-[9px] text-muted-foreground tracking-wider">
-                    {ASSET_CATEGORIES[asset.category].label} · palette source
-                  </span>
-                  <span className="truncate text-xs" title={asset.name}>
+                <div className="flex max-w-40 flex-col gap-0.5 px-2">
+                  <span
+                    className="truncate font-medium text-xs"
+                    title={asset.name}
+                  >
                     {asset.name}
+                  </span>
+                  <span className="truncate whitespace-nowrap font-mono text-[9px] text-muted-foreground tracking-wider">
+                    {ASSET_CATEGORIES[asset.category].label} · source
                   </span>
                 </div>
                 <span
