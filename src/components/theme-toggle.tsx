@@ -1,8 +1,13 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
-export function ThemeToggle() {
+/**
+ * Light/dark toggle. Color is inherited (`currentColor`) so nav surfaces can
+ * tint it; the site nav passes its muted-icon classes via className.
+ */
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
 
   return (
@@ -10,14 +15,17 @@ export function ThemeToggle() {
       type="button"
       aria-label="Toggle theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-      className="rounded-full p-2 hover:bg-accent cursor-pointer"
+      className={cn(
+        "cursor-pointer rounded-full p-2 transition-colors hover:bg-accent",
+        className,
+      )}
     >
       <span
-        className="icon-[solar--sun-2-line-duotone] block size-4.5 dark:hidden"
+        className="icon-[solar--sun-2-bold-duotone] block size-4.5 dark:hidden"
         aria-hidden
       />
       <span
-        className="icon-[solar--moon-line-duotone] hidden size-4.5 dark:block"
+        className="icon-[solar--moon-bold-duotone] hidden size-4.5 dark:block"
         aria-hidden
       />
     </button>

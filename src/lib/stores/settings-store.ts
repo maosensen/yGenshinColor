@@ -70,7 +70,10 @@ export const useSettingsStore = create<SettingsState>()(
       // v2: "apparent" gained its dark surface and the default flipped to
       // "integrate". Pre-v2 "apparent" was the visually-light default, so it
       // migrates to "integrate" to preserve what those visitors were seeing.
-      version: 2,
+      // v3: brand chrome went monochrome and the settings drawer is no longer
+      // mounted, so pre-v3 color presets (unreachable to change) reset to the
+      // new "mono" default.
+      version: 3,
       migrate: (persisted, version) => {
         const state = persisted as Partial<SettingsValues>;
         if (version < 1 && state.fontFamily === "public-sans") {
@@ -78,6 +81,9 @@ export const useSettingsStore = create<SettingsState>()(
         }
         if (version < 2 && state.navColor === "apparent") {
           state.navColor = "integrate";
+        }
+        if (version < 3) {
+          state.preset = "mono";
         }
         return state;
       },

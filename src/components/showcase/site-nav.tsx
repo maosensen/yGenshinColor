@@ -1,11 +1,14 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SocialLinks } from "@/components/showcase/social-links";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
-// Every nav glyph comes from the Solar set so the header reads as one family.
+// Every nav glyph comes from the Solar set so the header reads as one family
+// (brand marks live in SocialLinks as inline SVGs — Solar has none).
 const links = [
   { href: "/", label: "Studio", icon: "icon-[solar--pallete-2-linear]" },
   {
@@ -21,12 +24,14 @@ const links = [
 ];
 
 /**
- * Showcase top navigation: brand wordmark on the left, a short link row and
- * the white-preview (theme) toggle on the right. Replaces the dashboard
- * sidebar shell — a gallery site reads top-down, not from a side rail.
+ * Showcase top navigation, following the yStage header conventions: the
+ * active link is marked by a shared-layout pill that slides between
+ * destinations, a hairline divider separates links from the icon cluster
+ * (theme toggle + inline-SVG brand links).
  */
 export function SiteNav() {
   const pathname = usePathname();
+  const reduce = useReducedMotion();
 
   return (
     <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-md">
@@ -41,35 +46,37 @@ export function SiteNav() {
         </Link>
 
         <nav className="flex items-center gap-1">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition-colors",
-                pathname === link.href
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              <span className={cn(link.icon, "size-4")} aria-hidden />
-              {link.label}
-            </Link>
-          ))}
-          <a
-            href="https://github.com/maosensen/yGenshinColor"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub repository"
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <span
-              className="icon-[solar--code-square-bold-duotone] block size-4.5"
-              aria-hidden
-            />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <ThemeToggle />
+          {links.map((link) => {
+            const active = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition-colors",
+                  active
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId={reduce ? undefined : "site-nav-pill"}
+                    className="absolute inset-0 rounded-full bg-foreground/[0.06] ring-1 ring-border dark:bg-foreground/[0.08]"
+                    transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                  />
+                )}
+                <span
+                  className={cn(link.icon, "relative size-4")}
+                  aria-hidden
+                />
+                <span className="relative">{link.label}</span>
+              </Link>
+            );
+          })}
+          <span className="mx-2 h-4 w-px bg-border" aria-hidden />
+          <ThemeToggle className="text-muted-foreground hover:text-foreground" />
+          <SocialLinks />
         </nav>
       </div>
     </header>

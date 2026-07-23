@@ -9,6 +9,7 @@
 export type NavLayout = "vertical" | "horizontal" | "mini";
 export type NavColor = "integrate" | "apparent";
 export type Preset =
+  | "mono"
   | "blue"
   | "green"
   | "purple"
@@ -50,6 +51,7 @@ export const PRESET_OPTIONS: {
   value: Exclude<Preset, "custom">;
   swatch: string;
 }[] = [
+  { value: "mono", swatch: "oklch(0.55 0 0)" },
   { value: "blue", swatch: "oklch(0.617 0.208 259.473)" },
   { value: "green", swatch: "oklch(0.62 0.17 152)" },
   { value: "purple", swatch: "oklch(0.617 0.22 303)" },
@@ -120,7 +122,9 @@ export const DEFAULT_SETTINGS: SettingsValues = {
   // Matches Minimals: blended (light) nav by default; "apparent" opts into
   // the distinct dark surface.
   navColor: "integrate",
-  preset: "blue",
+  // Monochrome chrome by default: the scene palette is the only color voice;
+  // UI accents stay black/white/grey until a scene tints them.
+  preset: "mono",
   // Site tone: slate's blue-grey neutral (hue 257, tint 2.8) is the showcase
   // base — a deep grey-blue in dark mode instead of zinc's near-black.
   neutral: "slate",

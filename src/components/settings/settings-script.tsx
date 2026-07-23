@@ -23,7 +23,8 @@ var raw=localStorage.getItem(${JSON.stringify(SETTINGS_STORAGE_KEY)});
 if(raw){var p=JSON.parse(raw);if(p&&p.state){s=Object.assign({},def,p.state);
 var v=p.version||0;
 if(v<1&&s.fontFamily==="public-sans"){s.fontFamily="outfit";}
-if(v<2&&s.navColor==="apparent"){s.navColor="integrate";}}}
+if(v<2&&s.navColor==="apparent"){s.navColor="integrate";}
+if(v<3){s.preset="mono";}}}
 d.dataset.contrast=s.contrast?"high":"normal";
 d.dataset.compact=s.compact?"true":"false";
 d.dataset.maxWidth=s.maxWidth?"true":"false";
