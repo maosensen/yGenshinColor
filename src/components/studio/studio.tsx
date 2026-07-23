@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useStudioStore } from "@/lib/stores/studio-store";
+import { corePaletteColor, useStudioStore } from "@/lib/stores/studio-store";
 import { ASSET_CATEGORIES, type StudioAsset } from "@/lib/studio-assets";
 import { cn } from "@/lib/utils";
 import { AssetPanel } from "./asset-panel";
@@ -65,7 +65,10 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: "easeInOut" }}
         >
-          <background.Component palette={palette.map((c) => c.css)} />
+          <background.Component
+            palette={palette.map((c) => c.css)}
+            core={corePaletteColor(palette).css}
+          />
         </motion.div>
       </AnimatePresence>
 

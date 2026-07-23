@@ -12,6 +12,11 @@ import type { ComponentType } from "react";
 export type BackgroundProps = {
   /** CSS color strings sorted dark → light (≥ 2 entries). */
   palette: string[];
+  /**
+   * The palette's core theme color (one of `palette`). Hue-driven presets
+   * key off it; multi-color presets seed their color picking with it.
+   */
+  core: string;
 };
 
 export type BackgroundDef = {

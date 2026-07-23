@@ -98,14 +98,19 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
                       ease: "easeOut",
                     }}
                     type="button"
-                    title={`${color.hex} · click to copy`}
+                    title={`${color.hex}${color.core ? " · core" : ""} · click to copy`}
                     onClick={() =>
                       copy(color.hex, color.hex, `Copied ${color.hex}`)
                     }
                     className="group flex cursor-pointer flex-col items-center gap-1 rounded-lg px-1.5 pt-1.5 pb-1 transition-colors hover:bg-accent/60"
                   >
                     <span
-                      className="relative flex size-9 items-center justify-center rounded-full ring-1 ring-white/25 transition-transform duration-200 group-hover:scale-110"
+                      className={cn(
+                        "relative flex size-9 items-center justify-center rounded-full transition-transform duration-200 group-hover:scale-110",
+                        color.core
+                          ? "ring-2 ring-white/70 ring-offset-2 ring-offset-transparent"
+                          : "ring-1 ring-white/25",
+                      )}
                       style={{ backgroundColor: color.css }}
                     >
                       <span

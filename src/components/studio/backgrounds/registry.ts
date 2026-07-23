@@ -6,12 +6,18 @@ import {
   DarkVeilThumb,
   FerrofluidBg,
   FerrofluidThumb,
+  FloatingLinesBg,
+  FloatingLinesThumb,
   LightfallBg,
   LightfallThumb,
+  LightPillarBg,
+  LightPillarThumb,
   LiquidEtherBg,
   LiquidEtherThumb,
-  PrismBg,
-  PrismThumb,
+  SideRaysBg,
+  SideRaysThumb,
+  SilkBg,
+  SilkThumb,
 } from "./reactbits";
 import type { BackgroundDef } from "./types";
 
@@ -69,11 +75,32 @@ export const BACKGROUNDS: BackgroundDef[] = [
     Thumbnail: DarkVeilThumb,
   },
   {
-    id: "prism",
-    name: "Prism",
+    id: "light-pillar",
+    name: "Light Pillar",
     source: "React Bits",
-    Component: PrismBg,
-    Thumbnail: PrismThumb,
+    Component: LightPillarBg,
+    Thumbnail: LightPillarThumb,
+  },
+  {
+    id: "silk",
+    name: "Silk",
+    source: "React Bits",
+    Component: SilkBg,
+    Thumbnail: SilkThumb,
+  },
+  {
+    id: "floating-lines",
+    name: "Floating Lines",
+    source: "React Bits",
+    Component: FloatingLinesBg,
+    Thumbnail: FloatingLinesThumb,
+  },
+  {
+    id: "side-rays",
+    name: "Side Rays",
+    source: "React Bits",
+    Component: SideRaysBg,
+    Thumbnail: SideRaysThumb,
   },
 ];
 

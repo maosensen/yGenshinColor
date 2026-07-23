@@ -1,80 +1,147 @@
 "use client";
 
-import { formatHex, oklch } from "culori";
+import { converter, formatHex, oklch } from "culori";
 import { useMemo } from "react";
 import type { BackgroundProps } from "./types";
 import DarkVeil from "./vendor/DarkVeil";
 import Ferrofluid from "./vendor/Ferrofluid";
+import FloatingLines from "./vendor/FloatingLines";
 import Lightfall from "./vendor/Lightfall";
+import LightPillar from "./vendor/LightPillar";
 import LiquidEther from "./vendor/LiquidEther";
-import Prism from "./vendor/Prism";
+import SideRays from "./vendor/SideRays";
+import Silk from "./vendor/Silk";
 
 /**
- * Adapters mapping our `({ palette })` contract onto the vendored React Bits
- * backgrounds. The palette arrives as oklch() strings sorted dark → light;
- * the vendor components take sRGB hex (colors[]) or a hue rotation, so each
- * wrapper derives what its preset needs.
+ * Adapters mapping our `({ palette, core })` contract onto the vendored
+ * React Bits backgrounds. Presets take 1–3 colors (or a hue rotation), so a
+ * shared picker chooses which palette entries to spend:
+ *
+ * - 1 slot  → the core theme color,
+ * - n slots → core first, then max-min greedy in OKLab (each next pick is
+ *   the entry farthest from everything already chosen), so two slots never
+ *   waste themselves on near-twins.
+ *
+ * The animated component paints on a plain dark ground — palette colors are
+ * never used as a backdrop fill.
  *
  * WebGL note: only the active canvas mounts one of these — the picker panel
  * uses the lightweight CSS thumbnails below, so context count stays at 1.
  */
 
-const toHex = (css: string): string => formatHex(css) ?? "#888888";
+const toOklab = converter("oklab");
 
-/** Hue (deg) of the most saturated palette entry — the palette's "voice". */
-function dominantHue(palette: string[]): number {
-  let hue = 0;
-  let chroma = -1;
-  for (const css of palette) {
-    const c = oklch(css);
-    if (c && (c.c ?? 0) > chroma) {
-      chroma = c.c ?? 0;
-      hue = c.h ?? 0;
-    }
-  }
-  return hue;
+type Parsed = { css: string; l: number; lab: [number, number, number] };
+
+function parse(css: string): Parsed | null {
+  const lab = toOklab(css);
+  if (!lab) return null;
+  return { css, l: lab.l, lab: [lab.l, lab.a ?? 0, lab.b ?? 0] };
 }
 
-/** The three brightest entries as hex — what the glow-based presets paint with. */
-const brightHex = (palette: string[]) => palette.slice(-3).map(toHex);
+function labDist(a: Parsed, b: Parsed): number {
+  const dl = a.lab[0] - b.lab[0];
+  const da = a.lab[1] - b.lab[1];
+  const db = a.lab[2] - b.lab[2];
+  return dl * dl + da * da + db * db;
+}
 
-export function LiquidEtherBg({ palette }: BackgroundProps) {
-  const colors = useMemo(() => brightHex(palette), [palette]);
+/**
+ * Pick `n` palette entries as hex, seeded with the core color, then max-min
+ * greedy for spread. `minL` biases glow-type presets toward luminous picks
+ * (relaxed automatically when the palette is too dark to satisfy it).
+ * Returned dark → light.
+ */
+function pickColors(
+  palette: string[],
+  core: string,
+  n: number,
+  minL = 0,
+): string[] {
+  const parsed = palette.map(parse).filter((p): p is Parsed => p !== null);
+  if (parsed.length === 0) return Array(n).fill("#888888");
+
+  let pool = parsed.filter((p) => p.l >= minL);
+  if (pool.length < n) pool = parsed;
+
+  const coreParsed = parse(core);
+  const seed =
+    pool.find((p) => p.css === core) ??
+    (coreParsed
+      ? pool.reduce((best, p) =>
+          labDist(p, coreParsed) < labDist(best, coreParsed) ? p : best,
+        )
+      : pool[pool.length - 1]);
+
+  const chosen: Parsed[] = [seed];
+  while (chosen.length < n) {
+    let best: Parsed | null = null;
+    let bestScore = -1;
+    for (const cand of pool) {
+      if (chosen.includes(cand)) continue;
+      const minDist = Math.min(...chosen.map((ch) => labDist(cand, ch)));
+      if (minDist > bestScore) {
+        bestScore = minDist;
+        best = cand;
+      }
+    }
+    if (!best) break;
+    chosen.push(best);
+  }
+  while (chosen.length < n) chosen.push(seed);
+
+  return chosen
+    .sort((a, b) => a.l - b.l)
+    .map((p) => formatHex(p.css) ?? "#888888");
+}
+
+/** OKLCH hue (deg) of the core theme color. */
+function coreHue(core: string): number {
+  return oklch(core)?.h ?? 0;
+}
+
+/* ------------------------------- adapters -------------------------------- */
+
+export function LiquidEtherBg({ palette, core }: BackgroundProps) {
+  const colors = useMemo(() => pickColors(palette, core, 3), [palette, core]);
   return (
-    <div className="absolute inset-0" style={{ background: palette[0] }}>
+    <div className="absolute inset-0 bg-black">
       <LiquidEther colors={colors} autoDemo autoSpeed={0.4} />
     </div>
   );
 }
 
-export function FerrofluidBg({ palette }: BackgroundProps) {
-  const colors = useMemo(() => brightHex(palette), [palette]);
+export function FerrofluidBg({ palette, core }: BackgroundProps) {
+  const colors = useMemo(
+    () => pickColors(palette, core, 3, 0.3),
+    [palette, core],
+  );
   return (
-    <div className="absolute inset-0" style={{ background: palette[0] }}>
+    <div className="absolute inset-0 bg-black">
       <Ferrofluid colors={colors} speed={0.4} glow={1.6} />
     </div>
   );
 }
 
-export function LightfallBg({ palette }: BackgroundProps) {
-  const colors = useMemo(() => brightHex(palette), [palette]);
-  const backgroundColor = useMemo(() => toHex(palette[0]), [palette]);
+export function LightfallBg({ palette, core }: BackgroundProps) {
+  const colors = useMemo(
+    () => pickColors(palette, core, 3, 0.3),
+    [palette, core],
+  );
+  // backgroundColor intentionally left to the component default.
   return (
-    <div className="absolute inset-0">
-      <Lightfall colors={colors} backgroundColor={backgroundColor} />
+    <div className="absolute inset-0 bg-black">
+      <Lightfall colors={colors} />
     </div>
   );
 }
 
 // DarkVeil's stock pattern sits around magenta-purple; rotate it (degrees)
-// so the pattern lands on the palette's dominant hue.
+// so the pattern lands on the core theme color's hue.
 const DARK_VEIL_BASE_HUE = 320;
 
-export function DarkVeilBg({ palette }: BackgroundProps) {
-  const hueShift = useMemo(
-    () => dominantHue(palette) - DARK_VEIL_BASE_HUE,
-    [palette],
-  );
+export function DarkVeilBg({ core }: BackgroundProps) {
+  const hueShift = useMemo(() => coreHue(core) - DARK_VEIL_BASE_HUE, [core]);
   return (
     <div className="absolute inset-0 bg-black">
       <DarkVeil hueShift={hueShift} speed={0.6} />
@@ -82,15 +149,48 @@ export function DarkVeilBg({ palette }: BackgroundProps) {
   );
 }
 
-export function PrismBg({ palette }: BackgroundProps) {
-  // Prism rotates in radians; align its spectrum to the palette's voice.
-  const hueShift = useMemo(
-    () => (dominantHue(palette) * Math.PI) / 180,
-    [palette],
+export function LightPillarBg({ palette, core }: BackgroundProps) {
+  const [bottom, top] = useMemo(
+    () => pickColors(palette, core, 2, 0.25),
+    [palette, core],
+  );
+  // Stock look runs dark (top) → bright (bottom); keep that weighting.
+  return (
+    <div className="absolute inset-0 bg-black">
+      <LightPillar topColor={bottom} bottomColor={top} />
+    </div>
+  );
+}
+
+export function SilkBg({ core }: BackgroundProps) {
+  const color = useMemo(() => formatHex(core) ?? "#7B7481", [core]);
+  return (
+    <div className="absolute inset-0 bg-black">
+      <Silk color={color} speed={3} />
+    </div>
+  );
+}
+
+export function FloatingLinesBg({ palette, core }: BackgroundProps) {
+  const linesGradient = useMemo(
+    () => pickColors(palette, core, 3, 0.3),
+    [palette, core],
   );
   return (
     <div className="absolute inset-0 bg-black">
-      <Prism hueShift={hueShift} animationType="rotate" timeScale={0.4} />
+      <FloatingLines linesGradient={linesGradient} />
+    </div>
+  );
+}
+
+export function SideRaysBg({ palette, core }: BackgroundProps) {
+  const [ray2, ray1] = useMemo(
+    () => pickColors(palette, core, 2, 0.35),
+    [palette, core],
+  );
+  return (
+    <div className="absolute inset-0 bg-black">
+      <SideRays rayColor1={ray1} rayColor2={ray2} />
     </div>
   );
 }
@@ -98,15 +198,16 @@ export function PrismBg({ palette }: BackgroundProps) {
 /* ------------------------------ thumbnails ------------------------------- */
 /* CSS stand-ins for the picker: one WebGL context on the page is plenty. */
 
-export function LiquidEtherThumb({ palette }: BackgroundProps) {
-  const [base, ...rest] = palette;
+const THUMB_BG = "#050505";
+
+export function LiquidEtherThumb({ palette, core }: BackgroundProps) {
+  const colors = pickColors(palette, core, 3);
   return (
     <div
       className="absolute inset-0"
       style={{
-        backgroundColor: base,
-        backgroundImage: rest
-          .slice(-3)
+        backgroundColor: THUMB_BG,
+        backgroundImage: colors
           .map(
             (c, i) =>
               `radial-gradient(ellipse 70% 80% at ${25 + i * 25}% ${i % 2 ? 25 : 70}%, ${c}, transparent 60%)`,
@@ -118,27 +219,26 @@ export function LiquidEtherThumb({ palette }: BackgroundProps) {
   );
 }
 
-export function FerrofluidThumb({ palette }: BackgroundProps) {
-  const light = palette[palette.length - 1];
+export function FerrofluidThumb({ palette, core }: BackgroundProps) {
+  const [, , light] = pickColors(palette, core, 3, 0.3);
   return (
     <div
       className="absolute inset-0"
       style={{
-        backgroundColor: "#050505",
+        backgroundColor: THUMB_BG,
         backgroundImage: `radial-gradient(circle at 50% 55%, transparent 0 22%, ${light} 26%, transparent 34%), radial-gradient(circle at 42% 46%, ${light} 0 3%, transparent 8%)`,
       }}
     />
   );
 }
 
-export function LightfallThumb({ palette }: BackgroundProps) {
-  const [base, ...rest] = palette;
-  const streaks = rest.slice(-3);
+export function LightfallThumb({ palette, core }: BackgroundProps) {
+  const streaks = pickColors(palette, core, 3, 0.3);
   return (
     <div
       className="absolute inset-0"
       style={{
-        backgroundColor: base,
+        backgroundColor: THUMB_BG,
         backgroundImage: streaks
           .map(
             (c, i) =>
@@ -154,14 +254,13 @@ export function LightfallThumb({ palette }: BackgroundProps) {
   );
 }
 
-export function DarkVeilThumb({ palette }: BackgroundProps) {
-  const accent = palette[Math.max(0, palette.length - 2)];
+export function DarkVeilThumb({ core }: BackgroundProps) {
   return (
     <div
       className="absolute inset-0"
       style={{
         backgroundColor: "#030303",
-        backgroundImage: `radial-gradient(ellipse 90% 65% at 50% 42%, ${accent} 0%, transparent 68%)`,
+        backgroundImage: `radial-gradient(ellipse 90% 65% at 50% 42%, ${core} 0%, transparent 68%)`,
         filter: "saturate(1.2) blur(4px)",
         opacity: 0.85,
       }}
@@ -169,15 +268,65 @@ export function DarkVeilThumb({ palette }: BackgroundProps) {
   );
 }
 
-export function PrismThumb({ palette }: BackgroundProps) {
-  const stops = palette.slice(1).join(", ");
+export function LightPillarThumb({ palette, core }: BackgroundProps) {
+  const [dark, light] = pickColors(palette, core, 2, 0.25);
   return (
-    <div className="absolute inset-0" style={{ backgroundColor: "#030303" }}>
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `linear-gradient(180deg, ${dark} 0%, ${light} 100%)`,
+        backgroundSize: "18% 100%",
+        backgroundPosition: "50% 0",
+        backgroundRepeat: "no-repeat",
+        filter: "blur(6px)",
+      }}
+    />
+  );
+}
+
+export function SilkThumb({ core }: BackgroundProps) {
+  return (
+    <div className="absolute inset-0" style={{ backgroundColor: core }}>
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `conic-gradient(from 155deg at 50% 105%, transparent 15%, ${stops}, transparent 85%)`,
-          filter: "blur(7px)",
+          backgroundImage:
+            "linear-gradient(125deg, rgb(0 0 0 / 0.55) 0%, transparent 45%, rgb(0 0 0 / 0.35) 70%, rgb(255 255 255 / 0.12) 100%)",
+        }}
+      />
+    </div>
+  );
+}
+
+export function FloatingLinesThumb({ palette, core }: BackgroundProps) {
+  const colors = pickColors(palette, core, 3, 0.3);
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: colors
+          .map(
+            (c, i) =>
+              `linear-gradient(180deg, transparent calc(${28 + i * 22}% - 1px), ${c} ${28 + i * 22}%, transparent calc(${28 + i * 22}% + 2px))`,
+          )
+          .join(", "),
+        filter: "blur(0.4px)",
+      }}
+    />
+  );
+}
+
+export function SideRaysThumb({ palette, core }: BackgroundProps) {
+  const [ray2, ray1] = pickColors(palette, core, 2, 0.35);
+  return (
+    <div className="absolute inset-0" style={{ backgroundColor: THUMB_BG }}>
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `conic-gradient(from 118deg at -4% -10%, transparent 8%, ${ray1} 13%, transparent 20%, ${ray2} 26%, transparent 34%)`,
+          filter: "blur(5px)",
           opacity: 0.9,
         }}
       />

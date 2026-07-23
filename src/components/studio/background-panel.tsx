@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";
-import { useStudioStore } from "@/lib/stores/studio-store";
+import { corePaletteColor, useStudioStore } from "@/lib/stores/studio-store";
 import { cn } from "@/lib/utils";
 import { BACKGROUNDS } from "./backgrounds/registry";
 import { GLASS_PANEL, PanelHeader, PanelOpener } from "./panel-chrome";
@@ -22,6 +22,7 @@ export function BackgroundPanel() {
   const setBackground = useStudioStore((s) => s.setBackground);
   const palette = useStudioStore((s) => s.palette);
   const previewPalette = palette.map((c) => c.css);
+  const previewCore = corePaletteColor(palette).css;
 
   return (
     <>
@@ -69,7 +70,7 @@ export function BackgroundPanel() {
                       style={PREVIEW_STYLE}
                     >
                       <span className="pointer-events-none absolute inset-0">
-                        <Thumb palette={previewPalette} />
+                        <Thumb palette={previewPalette} core={previewCore} />
                       </span>
                       <AnimatePresence>
                         {active && (

@@ -40,7 +40,8 @@
       "linter": {
         "rules": {
           "correctness": {
-            "useExhaustiveDependencies": "off"
+            "useExhaustiveDependencies": "off",
+            "noUnusedVariables": "off"
           },
           "style": {
             "noNonNullAssertion": "off"
