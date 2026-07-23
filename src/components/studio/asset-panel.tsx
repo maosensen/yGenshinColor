@@ -79,7 +79,7 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
           >
             <PanelHeader
               icon="icon-[solar--gallery-wide-bold-duotone]"
-              title="素材"
+              title="Assets"
               meta={`${items.length}`}
               onCollapse={toggle}
             />
@@ -114,7 +114,7 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
                       className={cn(CATEGORY_ICONS[key], "size-3.5")}
                       aria-hidden
                     />
-                    {def.label}
+                    {def.tab}
                   </span>
                 </button>
               ))}
@@ -150,7 +150,7 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
       {!open && (
         <PanelOpener
           side="left"
-          label="素材"
+          label="Assets"
           icon="icon-[solar--gallery-wide-bold-duotone]"
           onClick={toggle}
         />
@@ -174,7 +174,7 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
       setPalette(await extractPalette(asset.src));
     } catch {
       setExtracting(false);
-      toast.error("色谱提取失败,换一张试试");
+      toast.error("Palette extraction failed — try another image");
     }
   };
 
@@ -194,7 +194,7 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
       />
       <button
         type="button"
-        aria-label={`选择 ${asset.name}`}
+        aria-label={`Select ${asset.name}`}
         onClick={pick}
         className="absolute inset-0 cursor-pointer"
       />
@@ -236,7 +236,7 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
 
       <button
         type="button"
-        aria-label={`预览 ${asset.name} 原图`}
+        aria-label={`Preview ${asset.name} full size`}
         onClick={() => setPreviewAsset(asset.id)}
         className="absolute top-1.5 right-1.5 flex size-6 cursor-pointer items-center justify-center rounded-full bg-black/35 text-white/85 opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/55 group-hover:opacity-100"
       >

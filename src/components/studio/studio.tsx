@@ -100,8 +100,8 @@ function ImmersiveRestore() {
       initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       type="button"
-      title="显示面板 (Esc)"
-      aria-label="显示面板 (Esc)"
+      title="Show panels (Esc)"
+      aria-label="Show panels (Esc)"
       onClick={toggleImmersive}
       className={cn(
         GLASS_PANEL,

@@ -58,7 +58,7 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
             ))}
             <span className="flex items-center gap-1.5 pl-1 text-muted-foreground text-xs">
               <Spinner className="size-3.5" />
-              提取中…
+              Extracting…
             </span>
           </span>
         ) : (
@@ -67,7 +67,7 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
               <>
                 <div className="flex max-w-36 flex-col gap-0.5 px-2">
                   <span className="font-mono text-[9px] text-muted-foreground tracking-wider">
-                    {ASSET_CATEGORIES[asset.category].label} · 色谱来源
+                    {ASSET_CATEGORIES[asset.category].label} · palette source
                   </span>
                   <span className="truncate text-xs" title={asset.name}>
                     {asset.name}
@@ -95,9 +95,9 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
                       ease: "easeOut",
                     }}
                     type="button"
-                    title={`${color.hex} · 点击复制`}
+                    title={`${color.hex} · click to copy`}
                     onClick={() =>
-                      copy(color.hex, color.hex, `已复制 ${color.hex}`)
+                      copy(color.hex, color.hex, `Copied ${color.hex}`)
                     }
                     className="group flex cursor-pointer flex-col items-center gap-1 rounded-lg px-1.5 pt-1.5 pb-1 transition-colors hover:bg-accent/60"
                   >
@@ -131,14 +131,14 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
               <ActionButton
                 icon="icon-[solar--copy-linear]"
                 copied={copiedKey === "__all__"}
-                label="复制全部 Hex"
-                onClick={() => copy(allHex, "__all__", "已复制全部 Hex")}
+                label="Copy all hex values"
+                onClick={() => copy(allHex, "__all__", "Copied all hex values")}
               />
               <ActionButton
                 icon="icon-[solar--code-linear]"
                 copied={copiedKey === "__css__"}
-                label="复制 CSS 渐变"
-                onClick={() => copy(gradient, "__css__", "已复制 CSS 渐变")}
+                label="Copy CSS gradient"
+                onClick={() => copy(gradient, "__css__", "Copied CSS gradient")}
               />
               <ImmersiveButton />
             </div>
@@ -155,8 +155,8 @@ function ImmersiveButton() {
   return (
     <button
       type="button"
-      title="沉浸欣赏"
-      aria-label="沉浸欣赏"
+      title="Immersive view"
+      aria-label="Immersive view"
       onClick={toggleImmersive}
       className="flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
     >

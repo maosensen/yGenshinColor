@@ -11,20 +11,20 @@ import type { BackgroundDef } from "./types";
 export const BACKGROUNDS: BackgroundDef[] = [
   {
     id: "radial-mesh-drift",
-    name: "多点径向 · 动态",
-    source: "内置",
+    name: "Radial Mesh · Animated",
+    source: "Built-in",
     Component: RadialMeshDrift,
   },
   {
     id: "radial-mesh",
-    name: "多点径向混合",
-    source: "内置",
+    name: "Radial Mesh",
+    source: "Built-in",
     Component: RadialMesh,
   },
   {
     id: "linear-axis",
-    name: "单轴线性",
-    source: "内置",
+    name: "Linear Axis",
+    source: "Built-in",
     Component: LinearAxis,
   },
 ];

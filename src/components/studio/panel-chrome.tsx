@@ -42,8 +42,8 @@ export function PanelHeader({
       )}
       <button
         type="button"
-        aria-label={`收起${title}栏`}
-        title={`收起${title}栏`}
+        aria-label={`Collapse ${title} panel`}
+        title={`Collapse ${title} panel`}
         onClick={onCollapse}
         className="ml-auto cursor-pointer rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       >

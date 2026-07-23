@@ -17,7 +17,7 @@ export type BackgroundProps = {
 export type BackgroundDef = {
   id: string;
   name: string;
-  /** Origin badge, e.g. "内置" or "React Bits". */
+  /** Origin badge, e.g. "Built-in" or "React Bits". */
   source: string;
   Component: ComponentType<BackgroundProps>;
 };

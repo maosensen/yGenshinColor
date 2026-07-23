@@ -39,12 +39,12 @@ export function BackgroundPanel() {
           >
             <PanelHeader
               icon="icon-[solar--pallete-2-bold-duotone]"
-              title="背景"
+              title="Backgrounds"
               meta={`${BACKGROUNDS.length}`}
               onCollapse={toggle}
             />
             <p className="-mt-1.5 px-3.5 pb-2 text-[11px] text-muted-foreground">
-              预览实时跟随当前色谱
+              Previews follow the current palette
             </p>
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 pb-3">
               {BACKGROUNDS.map((bg) => {
@@ -97,7 +97,7 @@ export function BackgroundPanel() {
       {!open && (
         <PanelOpener
           side="right"
-          label="背景"
+          label="Backgrounds"
           icon="icon-[solar--pallete-2-bold-duotone]"
           onClick={toggle}
         />
