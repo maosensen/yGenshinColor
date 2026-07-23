@@ -203,7 +203,7 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
           alt={asset.name}
           fill
           sizes="280px"
-          className="object-cover"
+          className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
         />
         <button
           type="button"

@@ -46,7 +46,9 @@ export function BackgroundPanel() {
             <p className="-mt-1.5 px-3.5 pb-2 text-[11px] text-muted-foreground">
               Previews follow the current palette
             </p>
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 pb-3">
+            {/* Same card grammar as the asset panel: media block + caption
+                line below (name left, origin right) — no bar over the art. */}
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 pb-3">
               {BACKGROUNDS.map((bg) => {
                 const active = backgroundId === bg.id;
                 return (
@@ -54,39 +56,51 @@ export function BackgroundPanel() {
                     key={bg.id}
                     type="button"
                     onClick={() => setBackground(bg.id)}
-                    className={cn(
-                      "group relative w-full cursor-pointer overflow-hidden rounded-xl text-left ring-1 ring-border transition-[transform,box-shadow] duration-200 hover:scale-[1.01] hover:shadow-lg/20",
-                      active && "ring-2 ring-primary",
-                    )}
+                    className="group block w-full cursor-pointer text-left"
                   >
                     <div
-                      className="pointer-events-none relative aspect-video overflow-hidden"
+                      className={cn(
+                        "relative aspect-video overflow-hidden rounded-lg ring-1 ring-border transition-shadow duration-200 group-hover:ring-foreground/25",
+                        active &&
+                          "ring-2 ring-primary group-hover:ring-primary",
+                      )}
                       style={PREVIEW_STYLE}
                     >
-                      <bg.Component palette={previewPalette} />
+                      <span className="pointer-events-none absolute inset-0">
+                        <bg.Component palette={previewPalette} />
+                      </span>
+                      <AnimatePresence>
+                        {active && (
+                          <motion.span
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.5, opacity: 0 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                            className="pointer-events-none absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+                          >
+                            <span
+                              className="icon-[solar--check-circle-bold] size-4"
+                              aria-hidden
+                            />
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     </div>
-                    <div className="flex items-center justify-between gap-2 bg-card/60 px-3 py-2 backdrop-blur-sm">
-                      <span className="truncate text-xs">{bg.name}</span>
-                      <span className="shrink-0 font-mono text-[10px] text-muted-foreground tracking-wider">
+                    <div className="flex h-[26px] items-center justify-between gap-2 px-0.5">
+                      <span
+                        className={cn(
+                          "truncate text-[11px] transition-colors",
+                          active
+                            ? "font-medium text-foreground"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {bg.name}
+                      </span>
+                      <span className="shrink-0 font-mono text-[9px] text-muted-foreground/70 tracking-wider">
                         {bg.source}
                       </span>
                     </div>
-                    <AnimatePresence>
-                      {active && (
-                        <motion.span
-                          initial={{ scale: 0.5, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.5, opacity: 0 }}
-                          transition={{ duration: 0.18, ease: "easeOut" }}
-                          className="pointer-events-none absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
-                        >
-                          <span
-                            className="icon-[solar--check-circle-bold] size-4"
-                            aria-hidden
-                          />
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
                   </button>
                 );
               })}
