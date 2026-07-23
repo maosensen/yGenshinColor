@@ -9,9 +9,12 @@ import { cn } from "@/lib/utils";
  * as a lit glass edge, all riding the theme's overlay elevation.
  */
 // 80% ground: enough opacity that text keeps stable contrast over any canvas
-// color, while the blur still reads as glass at the edges.
+// color, while the blur still reads as glass at the edges. blur-xl (24px)
+// instead of 2xl: backdrop-filter re-blurs the animated canvas every frame,
+// and at 80% opacity the smaller radius is visually identical but far
+// cheaper to composite.
 export const GLASS_PANEL = cn(
-  "rounded-2xl bg-background/80 backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-border",
+  "rounded-2xl bg-background/80 backdrop-blur-xl backdrop-saturate-150 ring-1 ring-border",
   "[box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.07),var(--shadow-overlay)]",
 );
 

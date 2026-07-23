@@ -63,7 +63,9 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.7, ease: "easeInOut" }}
+          // Short crossfade: while both layers live, two GL canvases render
+          // simultaneously — halving the window halves the worst-case cost.
+          transition={{ duration: 0.35, ease: "easeInOut" }}
         >
           <background.Component
             palette={palette.map((c) => c.css)}

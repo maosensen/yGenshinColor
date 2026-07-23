@@ -111,7 +111,7 @@ const SideRays = ({
       if (!containerRef.current) return;
 
       const renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 2),
+        dpr: 1, // [local] clamped for full-viewport use
         alpha: true,
       });
       rendererRef.current = renderer;
@@ -222,7 +222,7 @@ void main() {
 
       const updateSize = () => {
         if (!containerRef.current || !renderer) return;
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
+        renderer.dpr = 1; // [local] clamped for full-viewport use
         const { clientWidth: w, clientHeight: h } = containerRef.current;
         renderer.setSize(w, h);
         uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];

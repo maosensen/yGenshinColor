@@ -100,6 +100,21 @@ function coreHue(core: string): number {
   return oklch(core)?.h ?? 0;
 }
 
+/*
+ * Performance: these presets fill the whole viewport — on a 2x display the
+ * stock "min(devicePixelRatio, 2)" setting means shading ~7M pixels per
+ * frame, which is why they feel far heavier here than in the small demo
+ * boxes on reactbits.dev. Every GL preset is clamped to an effective 1x
+ * render resolution (the CSS-stretched canvas is invisible for these soft,
+ * low-frequency visuals) via props here or a [local] vendor clamp.
+ */
+
+/** DarkVeil multiplies its internal min(dpr,2) by resolutionScale. */
+function darkVeilResolutionScale(): number {
+  if (typeof window === "undefined") return 0.5;
+  return 1 / Math.min(window.devicePixelRatio || 1, 2);
+}
+
 /* ------------------------------- adapters -------------------------------- */
 
 export function LiquidEtherBg({ palette, core }: BackgroundProps) {
@@ -118,7 +133,7 @@ export function FerrofluidBg({ palette, core }: BackgroundProps) {
   );
   return (
     <div className="absolute inset-0 bg-black">
-      <Ferrofluid colors={colors} speed={0.4} glow={1.6} />
+      <Ferrofluid colors={colors} speed={0.4} glow={1.6} dpr={1} />
     </div>
   );
 }
@@ -131,7 +146,7 @@ export function LightfallBg({ palette, core }: BackgroundProps) {
   // backgroundColor intentionally left to the component default.
   return (
     <div className="absolute inset-0 bg-black">
-      <Lightfall colors={colors} />
+      <Lightfall colors={colors} dpr={1} />
     </div>
   );
 }
@@ -142,9 +157,14 @@ const DARK_VEIL_BASE_HUE = 320;
 
 export function DarkVeilBg({ core }: BackgroundProps) {
   const hueShift = useMemo(() => coreHue(core) - DARK_VEIL_BASE_HUE, [core]);
+  const resolutionScale = useMemo(() => darkVeilResolutionScale(), []);
   return (
     <div className="absolute inset-0 bg-black">
-      <DarkVeil hueShift={hueShift} speed={0.6} />
+      <DarkVeil
+        hueShift={hueShift}
+        speed={0.6}
+        resolutionScale={resolutionScale}
+      />
     </div>
   );
 }
@@ -157,7 +177,8 @@ export function LightPillarBg({ palette, core }: BackgroundProps) {
   // Stock look runs dark (top) → bright (bottom); keep that weighting.
   return (
     <div className="absolute inset-0 bg-black">
-      <LightPillar topColor={bottom} bottomColor={top} />
+      {/* "medium" halves the raymarch iterations and renders at 0.65x. */}
+      <LightPillar topColor={bottom} bottomColor={top} quality="medium" />
     </div>
   );
 }
