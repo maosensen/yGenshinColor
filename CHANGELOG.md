@@ -6,6 +6,13 @@ project uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Paper shader backgrounds** — three presets adapted from Paper
+  (@paper-design/shaders-react, Apache-2.0): Dot Orbit, Voronoi, and Pulsing
+  Border, each mapped to the extracted palette on a transparent ground so the
+  artboard backdrop shows through.
+
 ## [0.3.0] - 2026-07-24
 
 The studio becomes a canvas: a pannable, zoomable workbench with floating

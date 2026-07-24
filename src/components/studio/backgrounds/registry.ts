@@ -1,4 +1,12 @@
 import { LinearAxis } from "./linear-axis";
+import {
+  DotOrbitBg,
+  DotOrbitThumb,
+  PulsingBorderBg,
+  PulsingBorderThumb,
+  VoronoiBg,
+  VoronoiThumb,
+} from "./paper";
 import { RadialMesh } from "./radial-mesh";
 import { RadialMeshDrift } from "./radial-mesh-drift";
 import {
@@ -154,6 +162,27 @@ export const BACKGROUNDS: BackgroundDef[] = [
     source: "React Bits",
     Component: RippleGridBg,
     Thumbnail: RippleGridThumb,
+  },
+  {
+    id: "dot-orbit",
+    name: "Dot Orbit",
+    source: "Paper",
+    Component: DotOrbitBg,
+    Thumbnail: DotOrbitThumb,
+  },
+  {
+    id: "voronoi",
+    name: "Voronoi",
+    source: "Paper",
+    Component: VoronoiBg,
+    Thumbnail: VoronoiThumb,
+  },
+  {
+    id: "pulsing-border",
+    name: "Pulsing Border",
+    source: "Paper",
+    Component: PulsingBorderBg,
+    Thumbnail: PulsingBorderThumb,
   },
 ];
 

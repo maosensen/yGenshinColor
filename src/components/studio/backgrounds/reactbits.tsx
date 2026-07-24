@@ -57,7 +57,7 @@ function labDist(a: Parsed, b: Parsed): number {
  * (relaxed automatically when the palette is too dark to satisfy it).
  * Returned dark → light.
  */
-function pickColors(
+export function pickColors(
   palette: string[],
   core: string,
   n: number,
@@ -101,7 +101,7 @@ function pickColors(
 }
 
 /** OKLCH hue (deg) of the core theme color — for hue-driven presets (Orb). */
-function coreHue(core: string): number {
+export function coreHue(core: string): number {
   return oklch(core)?.h ?? 0;
 }
 

@@ -20,6 +20,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.4.0",
     "@iconify/react": "^6.0.2",
+    "@paper-design/shaders-react": "^0.0.77",
     "@react-three/fiber": "^9.6.1",
     "@tanstack/react-query": "^5.100.14",
     "@tanstack/react-virtual": "^3.14.8",
