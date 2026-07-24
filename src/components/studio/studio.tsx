@@ -4,6 +4,11 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
 import {
+  TransformComponent,
+  TransformWrapper,
+  useControls,
+} from "react-zoom-pan-pinch";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -25,20 +30,19 @@ import { GLASS_PANEL } from "./panel-chrome";
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
+/** Dotted ground behind the artboard — the "canvas" surface cue. */
+const GRID =
+  "radial-gradient(circle, color-mix(in oklch, var(--foreground) 9%, transparent) 1px, transparent 1px)";
+
 /**
- * The studio workbench: a full-bleed background canvas driven by the current
- * palette + preset, with the asset picker (left), background picker (right)
- * and palette bar (bottom) floating above it. Immersive mode tucks every
- * panel away to enjoy the canvas; Esc brings them back.
+ * The studio workbench: a framed background artboard sitting on a pannable /
+ * zoomable workspace, with the asset picker, background picker and palette
+ * bar floating in screen space above it. Immersive mode tucks every panel
+ * away to enjoy the canvas; Esc brings them back.
  */
 export function Studio({ assets }: { assets: StudioAsset[] }) {
-  const backgroundId = useStudioStore((s) => s.backgroundId);
-  const palette = useStudioStore((s) => s.palette);
   const immersive = useStudioStore((s) => s.immersive);
   const toggleImmersive = useStudioStore((s) => s.toggleImmersive);
-  const background = getBackground(backgroundId);
-  // Crossfade whenever the preset or the palette changes.
-  const canvasKey = `${background.id}|${palette.map((c) => c.hex).join()}`;
 
   // Esc leaves immersive mode (only bound while it's on, so dialogs keep Esc).
   useEffect(() => {
@@ -52,7 +56,56 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
 
   return (
     // 4rem nav height + its 1px bottom border — anything more and the page scrolls.
-    <div className="relative h-[calc(100svh-4rem-1px)] overflow-hidden">
+    <div
+      className="relative h-[calc(100svh-4rem-1px)] overflow-hidden bg-background"
+      style={{ backgroundImage: GRID, backgroundSize: "22px 22px" }}
+    >
+      <TransformWrapper
+        initialScale={1}
+        minScale={0.35}
+        maxScale={4}
+        centerOnInit
+        limitToBounds={false}
+        doubleClick={{ mode: "reset" }}
+        wheel={{ step: 0.08 }}
+        panning={{ velocityDisabled: true }}
+      >
+        <TransformComponent
+          wrapperStyle={{ width: "100%", height: "100%" }}
+          contentStyle={{ width: "100%", height: "100%" }}
+        >
+          <div className="flex h-full w-full items-center justify-center">
+            <Stage />
+          </div>
+        </TransformComponent>
+
+        {!immersive && <ZoomControls />}
+      </TransformWrapper>
+
+      {immersive ? (
+        <ImmersiveRestore />
+      ) : (
+        <>
+          <AssetPanel assets={assets} />
+          <BackgroundPanel />
+          <PaletteBar assets={assets} />
+        </>
+      )}
+
+      <AssetPreviewDialog assets={assets} />
+    </div>
+  );
+}
+
+/** The framed artboard: the live background, cross-fading on preset/palette. */
+function Stage() {
+  const backgroundId = useStudioStore((s) => s.backgroundId);
+  const palette = useStudioStore((s) => s.palette);
+  const background = getBackground(backgroundId);
+  const canvasKey = `${background.id}|${palette.map((c) => c.hex).join()}`;
+
+  return (
+    <div className="relative aspect-video w-[60rem] overflow-hidden rounded-2xl bg-black shadow-[0_24px_80px_-12px_rgb(0_0_0/0.7)] ring-1 ring-white/10">
       {/* initial={false}: the first paint must be fully visible even when the
           tab loads in the background (rAF is frozen there, so an entrance
           animation would strand the canvas at opacity 0). */}
@@ -74,25 +127,64 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Grain sits above the canvas, below the panels. */}
+      {/* Grain sits above the canvas, part of the artwork. */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.22] mix-blend-soft-light"
         style={{ backgroundImage: GRAIN, backgroundSize: "160px 160px" }}
         aria-hidden
       />
-
-      {immersive ? (
-        <ImmersiveRestore />
-      ) : (
-        <>
-          <AssetPanel assets={assets} />
-          <BackgroundPanel />
-          <PaletteBar assets={assets} />
-        </>
-      )}
-
-      <AssetPreviewDialog assets={assets} />
     </div>
+  );
+}
+
+/** Zoom cluster (bottom-center-left), wired to the pan/zoom context. */
+function ZoomControls() {
+  const { zoomIn, zoomOut, resetTransform } = useControls();
+  return (
+    <div
+      className={cn(
+        GLASS_PANEL,
+        "absolute bottom-6 left-4 z-20 flex items-center gap-0.5 p-1",
+      )}
+    >
+      <ZoomButton
+        icon="icon-[solar--minus-square-linear]"
+        label="Zoom out"
+        onClick={() => zoomOut()}
+      />
+      <ZoomButton
+        icon="icon-[solar--maximize-square-minimalistic-linear]"
+        label="Fit to screen"
+        onClick={() => resetTransform()}
+      />
+      <ZoomButton
+        icon="icon-[solar--add-square-linear]"
+        label="Zoom in"
+        onClick={() => zoomIn()}
+      />
+    </div>
+  );
+}
+
+function ZoomButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: string;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      title={label}
+      aria-label={label}
+      onClick={onClick}
+      className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+    >
+      <span className={cn(icon, "size-4.5")} aria-hidden />
+    </button>
   );
 }
 

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@dnd-kit/core": "^6.3.1",
     "@hookform/resolvers": "^5.4.0",
     "@iconify/react": "^6.0.2",
     "@react-three/fiber": "^9.6.1",
@@ -40,6 +41,7 @@
     "react-dom": "19.2.4",
     "react-hook-form": "^7.77.0",
     "react-resizable-panels": "^4.11.2",
+    "react-zoom-pan-pinch": "^4.0.3",
     "recharts": "3.8.0",
     "shadcn": "^4.10.0",
     "simplebar-react": "^3.3.2",
