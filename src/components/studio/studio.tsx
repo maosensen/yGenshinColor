@@ -141,8 +141,12 @@ function Stage() {
   }, [canvasKey]);
 
   return (
+    // Edge language matched to the panels: a themed hairline ring (ring-border)
+    // plus a soft drop shadow to lift the artboard off the ground. The lit top
+    // edge is added as an overlay below, since a full-bleed canvas would cover
+    // an inset box-shadow on this element.
     <div
-      className="relative aspect-video w-[60rem] overflow-hidden rounded-2xl ring-1 ring-white/15 shadow-[0_24px_80px_-12px_rgb(0_0_0/0.8)]"
+      className="relative aspect-video w-[60rem] overflow-hidden rounded-2xl ring-1 ring-border shadow-[0_24px_64px_-16px_rgb(0_0_0/0.7)]"
       style={{ backgroundColor: stageBg === "black" ? "#000" : "#fff" }}
     >
       {/* initial={false}: the first paint must be fully visible even when the
@@ -168,6 +172,14 @@ function Stage() {
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.22] mix-blend-soft-light"
         style={{ backgroundImage: GRAIN, backgroundSize: "160px 160px" }}
+        aria-hidden
+      />
+
+      {/* Lit top edge + faint inner hairline over the artwork, mirroring the
+          panels' inset highlight (an inset shadow on the frame itself would be
+          hidden under the full-bleed canvas). */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl [box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.1),inset_0_0_0_1px_rgb(255_255_255/0.04)]"
         aria-hidden
       />
     </div>
