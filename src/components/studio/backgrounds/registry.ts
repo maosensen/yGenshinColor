@@ -2,8 +2,6 @@ import { LinearAxis } from "./linear-axis";
 import { RadialMesh } from "./radial-mesh";
 import { RadialMeshDrift } from "./radial-mesh-drift";
 import {
-  DarkVeilBg,
-  DarkVeilThumb,
   FerrofluidBg,
   FerrofluidThumb,
   FloatingLinesBg,
@@ -66,13 +64,6 @@ export const BACKGROUNDS: BackgroundDef[] = [
     source: "React Bits",
     Component: LightfallBg,
     Thumbnail: LightfallThumb,
-  },
-  {
-    id: "dark-veil",
-    name: "Dark Veil",
-    source: "React Bits",
-    Component: DarkVeilBg,
-    Thumbnail: DarkVeilThumb,
   },
   {
     id: "light-pillar",

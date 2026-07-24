@@ -9,14 +9,14 @@ import { usePanelHandle } from "./draggable-panel";
  * over the live canvas, a hairline ring and a top inset highlight that reads
  * as a lit glass edge, all riding the theme's overlay elevation.
  */
-// 80% ground: enough opacity that text keeps stable contrast over any canvas
-// color, while the blur still reads as glass at the edges. blur-xl (24px)
-// instead of 2xl: backdrop-filter re-blurs the animated canvas every frame,
-// and at 80% opacity the smaller radius is visually identical but far
-// cheaper to composite.
+// Panels now float over the dark dotted ground (not the colorful canvas), so
+// they read as raised solid surfaces rather than glass: the Card token sits a
+// step lighter than the ground in dark mode, a hairline ring defines the edge,
+// and an explicit drop shadow lifts it off the ground (the theme's overlay
+// shadow is flat in dark). A light blur keeps a hint of glass at the edges.
 export const GLASS_PANEL = cn(
-  "rounded-2xl bg-background/80 backdrop-blur-xl backdrop-saturate-150 ring-1 ring-border",
-  "[box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.07),var(--shadow-overlay)]",
+  "rounded-2xl bg-card/92 backdrop-blur-md ring-1 ring-border",
+  "[box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.08),0_18px_44px_-16px_rgb(0_0_0/0.7)]",
 );
 
 /** Icon-chip + title header row shared by the floating panels. */

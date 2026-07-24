@@ -83,7 +83,8 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
         centerOnInit
         limitToBounds={false}
         doubleClick={{ mode: "reset" }}
-        wheel={{ step: 0.08 }}
+        // Scroll must not zoom the artboard — zoom is button-only (top toolbar).
+        wheel={{ disabled: true }}
         panning={{ velocityDisabled: true }}
       >
         <TransformComponent
@@ -95,7 +96,7 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
           </div>
         </TransformComponent>
 
-        {!immersive && <ZoomControls />}
+        {!immersive && <StudioToolbar />}
       </TransformWrapper>
 
       {immersive ? (
@@ -121,11 +122,29 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
 function Stage() {
   const backgroundId = useStudioStore((s) => s.backgroundId);
   const palette = useStudioStore((s) => s.palette);
+  const stageBg = useStudioStore((s) => s.stageBg);
   const background = getBackground(backgroundId);
   const canvasKey = `${background.id}|${palette.map((c) => c.hex).join()}`;
 
+  // Some GL presets measure their container on mount and, if that races with
+  // layout, render into only part of the canvas. Nudging a resize after mount
+  // and after the crossfade forces them to re-fit the full artboard.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: canvasKey is the re-fire trigger, not read inside
+  useEffect(() => {
+    const fire = () => window.dispatchEvent(new Event("resize"));
+    const t1 = setTimeout(fire, 60);
+    const t2 = setTimeout(fire, 450);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [canvasKey]);
+
   return (
-    <div className="relative aspect-video w-[60rem] overflow-hidden rounded-2xl bg-black shadow-[0_24px_80px_-12px_rgb(0_0_0/0.7)] ring-1 ring-white/10">
+    <div
+      className="relative aspect-video w-[60rem] overflow-hidden rounded-2xl ring-1 ring-white/15 shadow-[0_24px_80px_-12px_rgb(0_0_0/0.8)]"
+      style={{ backgroundColor: stageBg === "black" ? "#000" : "#fff" }}
+    >
       {/* initial={false}: the first paint must be fully visible even when the
           tab loads in the background (rAF is frozen there, so an entrance
           animation would strand the canvas at opacity 0). */}
@@ -157,14 +176,21 @@ function Stage() {
   );
 }
 
-/** Zoom cluster (bottom-center-left), wired to the pan/zoom context. */
-function ZoomControls() {
+/**
+ * Top toolbar (centered): zoom out / reset-to-fit / zoom in, then the artboard
+ * backdrop toggle (black ⇄ white). Lives inside TransformWrapper so it can
+ * reach the pan/zoom controls; positioned in screen space at the top.
+ */
+function StudioToolbar() {
   const { zoomIn, zoomOut, resetTransform } = useControls();
+  const stageBg = useStudioStore((s) => s.stageBg);
+  const toggleStageBg = useStudioStore((s) => s.toggleStageBg);
+
   return (
     <div
       className={cn(
         GLASS_PANEL,
-        "absolute bottom-6 left-4 z-20 flex items-center gap-0.5 p-1",
+        "absolute top-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-0.5 p-1",
       )}
     >
       <ZoomButton
@@ -173,8 +199,8 @@ function ZoomControls() {
         onClick={() => zoomOut()}
       />
       <ZoomButton
-        icon="icon-[solar--maximize-square-minimalistic-linear]"
-        label="Fit to screen"
+        icon="icon-[solar--restart-square-linear]"
+        label="Reset view"
         onClick={() => resetTransform()}
       />
       <ZoomButton
@@ -182,6 +208,20 @@ function ZoomControls() {
         label="Zoom in"
         onClick={() => zoomIn()}
       />
+      <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+      <button
+        type="button"
+        title="Toggle artboard background (black / white)"
+        aria-label="Toggle artboard background"
+        onClick={toggleStageBg}
+        className="flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-accent"
+      >
+        <span
+          className="size-4 rounded-full ring-1 ring-white/40"
+          style={{ backgroundColor: stageBg === "black" ? "#000" : "#fff" }}
+          aria-hidden
+        />
+      </button>
     </div>
   );
 }

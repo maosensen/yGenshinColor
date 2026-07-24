@@ -53,6 +53,8 @@ type StudioState = {
   immersive: boolean;
   /** Per-panel drag offset from its docked anchor (id → {x, y}). */
   panelOffsets: Record<string, { x: number; y: number }>;
+  /** Artboard backdrop shown behind (and through) the background. */
+  stageBg: "black" | "white";
   setCategory: (category: AssetCategory) => void;
   selectAsset: (assetId: string) => void;
   setPalette: (palette: ExtractedColor[]) => void;
@@ -64,6 +66,7 @@ type StudioState = {
   toggleImmersive: () => void;
   /** Accumulate a drag delta onto a panel's offset. */
   nudgePanel: (id: string, delta: { x: number; y: number }) => void;
+  toggleStageBg: () => void;
 };
 
 export const useStudioStore = create<StudioState>((set) => ({
@@ -77,6 +80,7 @@ export const useStudioStore = create<StudioState>((set) => ({
   previewAssetId: null,
   immersive: false,
   panelOffsets: {},
+  stageBg: "black",
   setCategory: (category) => set({ category }),
   selectAsset: (assetId) => set({ assetId }),
   setPalette: (palette) => set({ palette, extracting: false }),
@@ -96,4 +100,6 @@ export const useStudioStore = create<StudioState>((set) => ({
         },
       };
     }),
+  toggleStageBg: () =>
+    set((s) => ({ stageBg: s.stageBg === "black" ? "white" : "black" })),
 }));

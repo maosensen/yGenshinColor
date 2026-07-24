@@ -1,9 +1,8 @@
 "use client";
 
-import { converter, formatHex, oklch } from "culori";
+import { converter, formatHex } from "culori";
 import { useMemo } from "react";
 import type { BackgroundProps } from "./types";
-import DarkVeil from "./vendor/DarkVeil";
 import Ferrofluid from "./vendor/Ferrofluid";
 import FloatingLines from "./vendor/FloatingLines";
 import Lightfall from "./vendor/Lightfall";
@@ -95,11 +94,6 @@ function pickColors(
     .map((p) => formatHex(p.css) ?? "#888888");
 }
 
-/** OKLCH hue (deg) of the core theme color. */
-function coreHue(core: string): number {
-  return oklch(core)?.h ?? 0;
-}
-
 /*
  * Performance: these presets fill the whole viewport — on a 2x display the
  * stock "min(devicePixelRatio, 2)" setting means shading ~7M pixels per
@@ -109,18 +103,14 @@ function coreHue(core: string): number {
  * low-frequency visuals) via props here or a [local] vendor clamp.
  */
 
-/** DarkVeil multiplies its internal min(dpr,2) by resolutionScale. */
-function darkVeilResolutionScale(): number {
-  if (typeof window === "undefined") return 0.5;
-  return 1 / Math.min(window.devicePixelRatio || 1, 2);
-}
-
 /* ------------------------------- adapters -------------------------------- */
+/* Wrappers are transparent — the artboard (Stage) owns the backdrop color,
+   so its black/white toggle shows through wherever a preset has alpha. */
 
 export function LiquidEtherBg({ palette, core }: BackgroundProps) {
   const colors = useMemo(() => pickColors(palette, core, 3), [palette, core]);
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <LiquidEther colors={colors} autoDemo autoSpeed={0.4} />
     </div>
   );
@@ -132,7 +122,7 @@ export function FerrofluidBg({ palette, core }: BackgroundProps) {
     [palette, core],
   );
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <Ferrofluid colors={colors} speed={0.4} glow={1.6} dpr={1} />
     </div>
   );
@@ -145,26 +135,8 @@ export function LightfallBg({ palette, core }: BackgroundProps) {
   );
   // backgroundColor intentionally left to the component default.
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <Lightfall colors={colors} dpr={1} />
-    </div>
-  );
-}
-
-// DarkVeil's stock pattern sits around magenta-purple; rotate it (degrees)
-// so the pattern lands on the core theme color's hue.
-const DARK_VEIL_BASE_HUE = 320;
-
-export function DarkVeilBg({ core }: BackgroundProps) {
-  const hueShift = useMemo(() => coreHue(core) - DARK_VEIL_BASE_HUE, [core]);
-  const resolutionScale = useMemo(() => darkVeilResolutionScale(), []);
-  return (
-    <div className="absolute inset-0 bg-black">
-      <DarkVeil
-        hueShift={hueShift}
-        speed={0.6}
-        resolutionScale={resolutionScale}
-      />
     </div>
   );
 }
@@ -176,7 +148,7 @@ export function LightPillarBg({ palette, core }: BackgroundProps) {
   );
   // Stock look runs dark (top) → bright (bottom); keep that weighting.
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       {/* "medium" halves the raymarch iterations and renders at 0.65x. */}
       <LightPillar topColor={bottom} bottomColor={top} quality="medium" />
     </div>
@@ -186,7 +158,7 @@ export function LightPillarBg({ palette, core }: BackgroundProps) {
 export function SilkBg({ core }: BackgroundProps) {
   const color = useMemo(() => formatHex(core) ?? "#7B7481", [core]);
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <Silk color={color} speed={3} />
     </div>
   );
@@ -198,7 +170,7 @@ export function FloatingLinesBg({ palette, core }: BackgroundProps) {
     [palette, core],
   );
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <FloatingLines linesGradient={linesGradient} />
     </div>
   );
@@ -210,7 +182,7 @@ export function SideRaysBg({ palette, core }: BackgroundProps) {
     [palette, core],
   );
   return (
-    <div className="absolute inset-0 bg-black">
+    <div className="absolute inset-0">
       <SideRays rayColor1={ray1} rayColor2={ray2} />
     </div>
   );
@@ -270,20 +242,6 @@ export function LightfallThumb({ palette, core }: BackgroundProps) {
         backgroundPosition: "12% 0, 48% 0, 82% 0",
         backgroundRepeat: "no-repeat",
         filter: "blur(5px)",
-      }}
-    />
-  );
-}
-
-export function DarkVeilThumb({ core }: BackgroundProps) {
-  return (
-    <div
-      className="absolute inset-0"
-      style={{
-        backgroundColor: "#030303",
-        backgroundImage: `radial-gradient(ellipse 90% 65% at 50% 42%, ${core} 0%, transparent 68%)`,
-        filter: "saturate(1.2) blur(4px)",
-        opacity: 0.85,
       }}
     />
   );
