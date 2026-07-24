@@ -40,9 +40,6 @@ export function WarpGrid({ core }: BackgroundProps) {
     let raf = 0;
     let w = 0;
     let h = 0;
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -57,9 +54,11 @@ export function WarpGrid({ core }: BackgroundProps) {
     resize();
     window.addEventListener("resize", resize);
 
-    // Focus tracks the cursor when it's over the artboard, easing back to a
-    // slow idle drift once it leaves. Kept as layout-px state so it survives
-    // resizes; the listener is on window so pan/zoom capture can't swallow it.
+    // The gravity well exists ONLY under the cursor: no cursor over the
+    // artboard → flat grid, no well. Focus snaps to the pointer on entry (so
+    // it doesn't slide in from a stale spot) and follows while inside; the
+    // moment the cursor leaves the artboard the well vanishes. Listener is on
+    // window so pan/zoom pointer-capture can't swallow it.
     let focusX = w / 2;
     let focusY = h * 0.46;
     let pointer: { x: number; y: number } | null = null;
@@ -68,27 +67,34 @@ export function WarpGrid({ core }: BackgroundProps) {
       const rect = canvas.getBoundingClientRect();
       const nx = (e.clientX - rect.left) / rect.width;
       const ny = (e.clientY - rect.top) / rect.height;
-      pointer =
-        nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1
-          ? { x: nx * w, y: ny * h }
-          : null;
+      if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
+        const p = { x: nx * w, y: ny * h };
+        if (!pointer) {
+          // snap on entry — no slide-in from wherever focus last rested
+          focusX = p.x;
+          focusY = p.y;
+        }
+        pointer = p;
+      } else {
+        pointer = null;
+      }
+    };
+    // Cursor leaving the window fires no mousemove; drop the well then too.
+    const onLeave = () => {
+      pointer = null;
     };
     window.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseleave", onLeave);
 
-    const draw = (t: number) => {
-      const time = reduce ? 0 : t / 1000;
+    const draw = () => {
       const [r, g, b] = hexToRgb(formatHex(coreRef.current) ?? "#88aaff");
       ctx.clearRect(0, 0, w, h);
 
-      // Target = cursor if over the artboard, else a slow idle Lissajous.
-      const targetX = pointer
-        ? pointer.x
-        : w / 2 + Math.cos(time * 0.18) * w * 0.1;
-      const targetY = pointer
-        ? pointer.y
-        : h * 0.46 + Math.sin(time * 0.23) * h * 0.1;
-      focusX += (targetX - focusX) * 0.09;
-      focusY += (targetY - focusY) * 0.09;
+      const hasFocus = pointer !== null;
+      if (pointer) {
+        focusX += (pointer.x - focusX) * 0.15;
+        focusY += (pointer.y - focusY) * 0.15;
+      }
       const fx = focusX;
       const fy = focusY;
 
@@ -96,7 +102,8 @@ export function WarpGrid({ core }: BackgroundProps) {
       const rows = Math.ceil(h / SPACING) + 2;
 
       // Displace each node toward the focus by a smooth well falloff, and keep
-      // the well value as a per-node intensity for colour/glow.
+      // the well value as a per-node intensity for colour/glow. With no cursor
+      // over the artboard the well is zero everywhere → a plain faint grid.
       const px: number[][] = [];
       const py: number[][] = [];
       const inten: number[][] = [];
@@ -107,6 +114,12 @@ export function WarpGrid({ core }: BackgroundProps) {
         for (let i = 0; i < cols; i++) {
           const gx = i * SPACING;
           const gy = j * SPACING;
+          if (!hasFocus) {
+            px[j][i] = gx;
+            py[j][i] = gy;
+            inten[j][i] = 0;
+            continue;
+          }
           const dx = gx - fx;
           const dy = gy - fy;
           const d2 = dx * dx + dy * dy;
@@ -163,6 +176,7 @@ export function WarpGrid({ core }: BackgroundProps) {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 
