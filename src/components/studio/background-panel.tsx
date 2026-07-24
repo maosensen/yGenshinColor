@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { corePaletteColor, useStudioStore } from "@/lib/stores/studio-store";
 import { cn } from "@/lib/utils";
 import { BACKGROUNDS } from "./backgrounds/registry";
+import { DraggablePanel } from "./draggable-panel";
 import { GLASS_PANEL, PanelHeader, PanelOpener } from "./panel-chrome";
 
 /** Soften the blob blur inside the small thumbnails. */
@@ -26,17 +27,16 @@ export function BackgroundPanel() {
 
   return (
     <>
-      <AnimatePresence initial={false}>
-        {open && (
+      {open ? (
+        <DraggablePanel
+          id="backgrounds"
+          className="top-4 right-4 bottom-4 w-64"
+        >
+          {/* initial={false}: a tab that mounts in the background has rAF
+              frozen, so an opacity-0 entrance would strand the panel invisible. */}
           <motion.aside
-            initial={{ x: 24, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 24, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className={cn(
-              GLASS_PANEL,
-              "absolute top-4 right-4 bottom-4 z-20 flex w-64 flex-col",
-            )}
+            initial={false}
+            className={cn(GLASS_PANEL, "flex h-full w-full flex-col")}
           >
             <PanelHeader
               icon="icon-[solar--pallete-2-bold-duotone]"
@@ -109,9 +109,8 @@ export function BackgroundPanel() {
               })}
             </div>
           </motion.aside>
-        )}
-      </AnimatePresence>
-      {!open && (
+        </DraggablePanel>
+      ) : (
         <PanelOpener
           side="right"
           label="Backgrounds"

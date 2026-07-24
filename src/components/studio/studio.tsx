@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -43,6 +51,14 @@ const GRID =
 export function Studio({ assets }: { assets: StudioAsset[] }) {
   const immersive = useStudioStore((s) => s.immersive);
   const toggleImmersive = useStudioStore((s) => s.toggleImmersive);
+  const nudgePanel = useStudioStore((s) => s.nudgePanel);
+
+  // 5px activation so a click on a header button never starts a panel drag.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  );
+  const onDragEnd = (e: DragEndEvent) =>
+    nudgePanel(String(e.active.id), { x: e.delta.x, y: e.delta.y });
 
   // Esc leaves immersive mode (only bound while it's on, so dialogs keep Esc).
   useEffect(() => {
@@ -85,11 +101,15 @@ export function Studio({ assets }: { assets: StudioAsset[] }) {
       {immersive ? (
         <ImmersiveRestore />
       ) : (
-        <>
+        <DndContext
+          sensors={sensors}
+          modifiers={[restrictToWindowEdges]}
+          onDragEnd={onDragEnd}
+        >
           <AssetPanel assets={assets} />
           <BackgroundPanel />
           <PaletteBar assets={assets} />
-        </>
+        </DndContext>
       )}
 
       <AssetPreviewDialog assets={assets} />

@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useStudioStore } from "@/lib/stores/studio-store";
 import { ASSET_CATEGORIES, type StudioAsset } from "@/lib/studio-assets";
 import { cn } from "@/lib/utils";
+import { DraggablePanel, usePanelHandle } from "./draggable-panel";
 import { GLASS_PANEL } from "./panel-chrome";
 
 /**
@@ -38,14 +39,12 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
     .join(", ")})`;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center">
+    <DraggablePanel id="palette" centerX className="bottom-6 left-1/2">
       <motion.div
         layout
-        className={cn(
-          GLASS_PANEL,
-          "pointer-events-auto flex items-center gap-1 px-3 py-2.5",
-        )}
+        className={cn(GLASS_PANEL, "flex items-center gap-1 px-2 py-2.5")}
       >
+        <PaletteGrip />
         {extracting ? (
           <span className="flex items-center gap-2.5 px-2 py-2">
             {[0, 1, 2, 3, 4].map((i) => (
@@ -153,7 +152,23 @@ export function PaletteBar({ assets }: { assets: StudioAsset[] }) {
           </>
         )}
       </motion.div>
-    </div>
+    </DraggablePanel>
+  );
+}
+
+/** Drag grip — the palette bar's contents are all interactive, so dragging
+ * gets its own handle at the leading edge. */
+function PaletteGrip() {
+  const handle = usePanelHandle();
+  if (!handle) return null;
+  return (
+    <span
+      {...handle.listeners}
+      className="flex h-9 cursor-grab touch-none items-center px-1 text-muted-foreground/50 transition-colors hover:text-muted-foreground active:cursor-grabbing"
+      aria-hidden
+    >
+      <span className="icon-[solar--menu-dots-bold] size-4 rotate-90" />
+    </span>
   );
 }
 

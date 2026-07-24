@@ -51,6 +51,8 @@ type StudioState = {
   previewAssetId: string | null;
   /** Immersive mode: hide every floating panel and enjoy the canvas. */
   immersive: boolean;
+  /** Per-panel drag offset from its docked anchor (id → {x, y}). */
+  panelOffsets: Record<string, { x: number; y: number }>;
   setCategory: (category: AssetCategory) => void;
   selectAsset: (assetId: string) => void;
   setPalette: (palette: ExtractedColor[]) => void;
@@ -60,6 +62,8 @@ type StudioState = {
   toggleBgPanel: () => void;
   setPreviewAsset: (assetId: string | null) => void;
   toggleImmersive: () => void;
+  /** Accumulate a drag delta onto a panel's offset. */
+  nudgePanel: (id: string, delta: { x: number; y: number }) => void;
 };
 
 export const useStudioStore = create<StudioState>((set) => ({
@@ -72,6 +76,7 @@ export const useStudioStore = create<StudioState>((set) => ({
   bgPanelOpen: true,
   previewAssetId: null,
   immersive: false,
+  panelOffsets: {},
   setCategory: (category) => set({ category }),
   selectAsset: (assetId) => set({ assetId }),
   setPalette: (palette) => set({ palette, extracting: false }),
@@ -81,4 +86,14 @@ export const useStudioStore = create<StudioState>((set) => ({
   toggleBgPanel: () => set((s) => ({ bgPanelOpen: !s.bgPanelOpen })),
   setPreviewAsset: (previewAssetId) => set({ previewAssetId }),
   toggleImmersive: () => set((s) => ({ immersive: !s.immersive })),
+  nudgePanel: (id, delta) =>
+    set((s) => {
+      const cur = s.panelOffsets[id] ?? { x: 0, y: 0 };
+      return {
+        panelOffsets: {
+          ...s.panelOffsets,
+          [id]: { x: cur.x + delta.x, y: cur.y + delta.y },
+        },
+      };
+    }),
 }));

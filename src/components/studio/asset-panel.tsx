@@ -14,6 +14,7 @@ import {
   type StudioAsset,
 } from "@/lib/studio-assets";
 import { cn } from "@/lib/utils";
+import { DraggablePanel } from "./draggable-panel";
 import { GLASS_PANEL, PanelHeader, PanelOpener } from "./panel-chrome";
 
 /** Vertical-format categories render two columns per virtual row. */
@@ -84,17 +85,13 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
 
   return (
     <>
-      <AnimatePresence initial={false}>
-        {open && (
+      {open ? (
+        <DraggablePanel id="assets" className="top-4 bottom-4 left-4 w-72">
+          {/* initial={false}: a tab that mounts in the background has rAF
+              frozen, so an opacity-0 entrance would strand the panel invisible. */}
           <motion.aside
-            initial={{ x: -24, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -24, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className={cn(
-              GLASS_PANEL,
-              "absolute top-4 bottom-4 left-4 z-20 flex w-72 flex-col",
-            )}
+            initial={false}
+            className={cn(GLASS_PANEL, "flex h-full w-full flex-col")}
           >
             <PanelHeader
               icon="icon-[solar--gallery-wide-bold-duotone]"
@@ -166,9 +163,8 @@ export function AssetPanel({ assets }: { assets: StudioAsset[] }) {
               </div>
             </div>
           </motion.aside>
-        )}
-      </AnimatePresence>
-      {!open && (
+        </DraggablePanel>
+      ) : (
         <PanelOpener
           side="left"
           label="Assets"

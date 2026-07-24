@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { usePanelHandle } from "./draggable-panel";
 
 /**
  * Shared frosted-glass surface for the floating studio panels: heavy blur
@@ -31,8 +32,16 @@ export function PanelHeader({
   meta?: string;
   onCollapse: () => void;
 }) {
+  // The header doubles as the panel's drag handle when inside a DraggablePanel.
+  const handle = usePanelHandle();
   return (
-    <div className="flex items-center gap-2 px-3.5 pt-3 pb-2">
+    <div
+      className={cn(
+        "flex items-center gap-2 px-3.5 pt-3 pb-2",
+        handle && "cursor-grab touch-none active:cursor-grabbing",
+      )}
+      {...(handle?.listeners ?? {})}
+    >
       <span
         className="flex size-6 items-center justify-center rounded-md bg-primary/12 text-primary"
         aria-hidden
@@ -50,6 +59,8 @@ export function PanelHeader({
         aria-label={`Collapse ${title} panel`}
         title={`Collapse ${title} panel`}
         onClick={onCollapse}
+        // Don't let a click on collapse start a drag on the header handle.
+        onPointerDown={(e) => e.stopPropagation()}
         className="ml-auto cursor-pointer rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       >
         <span
