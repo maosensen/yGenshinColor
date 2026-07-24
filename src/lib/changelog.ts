@@ -35,6 +35,40 @@ export type ChangelogRelease = {
 /** Newest first. */
 export const changelog: ChangelogRelease[] = [
   {
+    version: "0.3.0",
+    date: "2026-07-24",
+    title: "The studio becomes a canvas",
+    summary:
+      "The workbench turns into a pannable, zoomable canvas with floating panels you can drag anywhere, joined by a fresh crop of palette-driven backgrounds.",
+    changes: [
+      {
+        kind: "new",
+        title: "Canvas workbench",
+        text: "Pan and zoom around a framed artboard, and drag the asset and background panels wherever you like — a top toolbar zooms, resets the view, and flips the artboard between black and white.",
+      },
+      {
+        kind: "new",
+        title: "Warp Grid",
+        text: "A faint grid pinched toward a glowing gravity well that follows your cursor, its nodes lit in the palette's core color.",
+      },
+      {
+        kind: "new",
+        title: "Six more backgrounds",
+        text: "Ripple Grid, Letter Glitch, Orb, Dot Field, Aurora, and Soft Aurora join the roster, each painting from your extracted palette.",
+      },
+      {
+        kind: "improved",
+        title: "Smoother, cleaner canvas",
+        text: "Backgrounds render at native resolution again (no more grain), Silk's noise is off, resting borders are gone, and dark-mode panels read clearly over any animation.",
+      },
+      {
+        kind: "fixed",
+        title: "Ripple Grid stability",
+        text: "Switching away from Ripple Grid no longer breaks the artboard.",
+      },
+    ],
+  },
+  {
     version: "0.2.1",
     date: "2026-07-23",
     title: "The studio grows up",

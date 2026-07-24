@@ -6,6 +6,46 @@ project uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-24
+
+The studio becomes a canvas: a pannable, zoomable workbench with floating
+panels, plus a fresh crop of palette-driven backgrounds.
+
+### Added
+
+- **Canvas workbench** — the studio is now a pannable, zoomable workspace.
+  The artboard sits in a frame you can drag around and scale, and the asset
+  and background panels float as cards you can drop anywhere (dnd-kit). A top
+  toolbar zooms in / out, resets the view, and flips the artboard between a
+  black and a white backdrop.
+- **Warp Grid** (built-in) — a faint square grid pinched toward a gravity
+  well, inspired by the satoriui.site hero, its intersection nodes glowing in
+  the palette's core color. The focus follows the cursor and eases back to a
+  slow drift once it leaves the artboard.
+- **Six more React Bits presets** — Ripple Grid, Letter Glitch, Orb, Dot
+  Field, Aurora, and Soft Aurora, each painting from the extracted palette.
+
+### Changed
+
+- Scrolling no longer zooms the canvas (zoom is toolbar-only) and panels stay
+  wherever you drop them.
+- Animated backgrounds render at native device pixel ratio again — the 0.2.1
+  effective-1x clamp left the noise-based presets grainy, and the smaller
+  framed artboard keeps native resolution affordable. Silk's noise is off.
+- The artboard, asset cards, and background cards drop their resting borders,
+  and dark-mode panels and cards gain contrast so everything reads cleanly
+  over an animated background.
+- Default local dev / start port is now 4395.
+
+### Fixed
+
+- Ripple Grid no longer breaks the artboard — its render loop is cancelled on
+  unmount instead of drawing to a lost GL context.
+
+### Removed
+
+- Dark Veil preset (GPU cost).
+
 ## [0.2.1] - 2026-07-23
 
 The studio workbench grows up: React Bits backgrounds, a smarter palette,
@@ -144,7 +184,8 @@ First release — a themeable Next.js dashboard template.
 - **Changelog page** — curated release notes on a timeline at `/changelog`,
   rendered from a typed changelog module.
 
-[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/maosensen/yGenshinColor/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/maosensen/yGenshinColor/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/maosensen/yGenshinColor/releases/tag/v0.2.0
 [0.1.2]: https://github.com/maosensen/yTemplate/compare/v0.1.1...v0.1.2
