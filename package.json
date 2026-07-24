@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.33.4",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 4395",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 4395",
     "check": "biome check && tsc --noEmit",
     "check-types": "tsc --noEmit",
     "lint": "biome check",

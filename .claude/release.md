@@ -25,4 +25,4 @@
 
 - **分支策略**:本仓库直接在 `main` 开发,tag 打在 main 上(yTemplate 的 dev→main 流程不适用)。
 - 历史沿革:仓库由 yTemplate 0.1.2 复制而来,v0.1.x 的 tag 只存在于 yTemplate 仓库;本仓库首个 tag 为 v0.2.0,CHANGELOG 旧条目链接仍指向 yTemplate。
-- 用户常驻 `next dev`(端口 3005):Next 16 拒绝同项目第二个 dev 实例,验证页面直接 curl 3005 的 SSR 产物即可。
+- 本工程默认本地端口 **4395**(`package.json` 的 dev/start + `.claude/launch.json` 均已固定)。用户常驻 `next dev`(端口 4395):Next 16 拒绝同项目第二个 dev 实例,验证页面直接 curl 4395 的 SSR 产物即可(该端口若被占用,临时换端口起一个实例验证,验证后关掉)。
