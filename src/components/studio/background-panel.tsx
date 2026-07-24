@@ -63,9 +63,8 @@ export function BackgroundPanel() {
                   >
                     <div
                       className={cn(
-                        "relative aspect-video overflow-hidden rounded-lg ring-1 ring-border transition-shadow duration-200 group-hover:ring-foreground/25",
-                        active &&
-                          "ring-2 ring-primary group-hover:ring-primary",
+                        "relative aspect-video overflow-hidden rounded-lg transition-shadow duration-200",
+                        active && "ring-2 ring-primary",
                       )}
                       style={PREVIEW_STYLE}
                     >

@@ -201,8 +201,8 @@ function AssetCard({ asset }: { asset: StudioAsset }) {
     <div className="group flex min-w-0 flex-1 flex-col">
       <div
         className={cn(
-          "relative min-h-0 flex-1 overflow-hidden rounded-lg bg-muted/40 ring-1 ring-border transition-shadow duration-200 group-hover:ring-foreground/25",
-          selected && "ring-2 ring-primary group-hover:ring-primary",
+          "relative min-h-0 flex-1 overflow-hidden rounded-lg bg-muted/40 transition-shadow duration-200",
+          selected && "ring-2 ring-primary",
         )}
       >
         <Image
