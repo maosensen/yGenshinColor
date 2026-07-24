@@ -96,11 +96,11 @@ function pickColors(
 
 /*
  * Performance: these presets fill the whole viewport — on a 2x display the
- * stock "min(devicePixelRatio, 2)" setting means shading ~7M pixels per
- * frame, which is why they feel far heavier here than in the small demo
- * boxes on reactbits.dev. Every GL preset is clamped to an effective 1x
- * render resolution (the CSS-stretched canvas is invisible for these soft,
- * low-frequency visuals) via props here or a [local] vendor clamp.
+ * stock "min(devicePixelRatio, 2)" setting. That was clamped to 1x while the
+ * background filled the whole viewport (~7M px/frame); now it renders inside
+ * a small framed artboard (960×540), so native DPR is affordable again — and
+ * at 1x these noise-based shaders looked visibly grainy, so DPR is left at
+ * the vendor default (min(devicePixelRatio, 2)).
  */
 
 /* ------------------------------- adapters -------------------------------- */
@@ -123,7 +123,7 @@ export function FerrofluidBg({ palette, core }: BackgroundProps) {
   );
   return (
     <div className="absolute inset-0">
-      <Ferrofluid colors={colors} speed={0.4} glow={1.6} dpr={1} />
+      <Ferrofluid colors={colors} speed={0.4} glow={1.6} />
     </div>
   );
 }
@@ -136,7 +136,7 @@ export function LightfallBg({ palette, core }: BackgroundProps) {
   // backgroundColor intentionally left to the component default.
   return (
     <div className="absolute inset-0">
-      <Lightfall colors={colors} dpr={1} />
+      <Lightfall colors={colors} />
     </div>
   );
 }
@@ -149,8 +149,7 @@ export function LightPillarBg({ palette, core }: BackgroundProps) {
   // Stock look runs dark (top) → bright (bottom); keep that weighting.
   return (
     <div className="absolute inset-0">
-      {/* "medium" halves the raymarch iterations and renders at 0.65x. */}
-      <LightPillar topColor={bottom} bottomColor={top} quality="medium" />
+      <LightPillar topColor={bottom} bottomColor={top} />
     </div>
   );
 }
