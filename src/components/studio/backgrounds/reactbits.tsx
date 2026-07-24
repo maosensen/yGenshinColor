@@ -1,15 +1,20 @@
 "use client";
 
-import { converter, formatHex } from "culori";
+import { converter, formatHex, oklch } from "culori";
 import { useMemo } from "react";
 import type { BackgroundProps } from "./types";
+import Aurora from "./vendor/Aurora";
+import DotField from "./vendor/DotField";
 import Ferrofluid from "./vendor/Ferrofluid";
 import FloatingLines from "./vendor/FloatingLines";
+import LetterGlitch from "./vendor/LetterGlitch";
 import Lightfall from "./vendor/Lightfall";
 import LightPillar from "./vendor/LightPillar";
 import LiquidEther from "./vendor/LiquidEther";
+import Orb from "./vendor/Orb";
 import SideRays from "./vendor/SideRays";
 import Silk from "./vendor/Silk";
+import SoftAurora from "./vendor/SoftAurora";
 
 /**
  * Adapters mapping our `({ palette, core })` contract onto the vendored
@@ -94,6 +99,11 @@ function pickColors(
     .map((p) => formatHex(p.css) ?? "#888888");
 }
 
+/** OKLCH hue (deg) of the core theme color — for hue-driven presets (Orb). */
+function coreHue(core: string): number {
+  return oklch(core)?.h ?? 0;
+}
+
 /*
  * Performance: these presets fill the whole viewport — on a 2x display the
  * stock "min(devicePixelRatio, 2)" setting. That was clamped to 1x while the
@@ -158,7 +168,65 @@ export function SilkBg({ core }: BackgroundProps) {
   const color = useMemo(() => formatHex(core) ?? "#7B7481", [core]);
   return (
     <div className="absolute inset-0">
-      <Silk color={color} speed={3} />
+      <Silk color={color} speed={3} noiseIntensity={0} />
+    </div>
+  );
+}
+
+export function LetterGlitchBg({ palette, core }: BackgroundProps) {
+  const glitchColors = useMemo(
+    () => pickColors(palette, core, 3, 0.3),
+    [palette, core],
+  );
+  return (
+    <div className="absolute inset-0">
+      <LetterGlitch glitchColors={glitchColors} />
+    </div>
+  );
+}
+
+export function OrbBg({ core }: BackgroundProps) {
+  const hue = useMemo(() => Math.round(coreHue(core)), [core]);
+  return (
+    <div className="absolute inset-0">
+      <Orb hue={hue} hoverIntensity={0.4} />
+    </div>
+  );
+}
+
+export function DotFieldBg({ palette, core }: BackgroundProps) {
+  const [from, to] = useMemo(
+    () => pickColors(palette, core, 2, 0.3),
+    [palette, core],
+  );
+  const glow = useMemo(() => formatHex(core) ?? "#888888", [core]);
+  return (
+    <div className="absolute inset-0">
+      <DotField gradientFrom={from} gradientTo={to} glowColor={glow} />
+    </div>
+  );
+}
+
+export function AuroraBg({ palette, core }: BackgroundProps) {
+  const colorStops = useMemo(
+    () => pickColors(palette, core, 3, 0.3),
+    [palette, core],
+  );
+  return (
+    <div className="absolute inset-0">
+      <Aurora colorStops={colorStops} />
+    </div>
+  );
+}
+
+export function SoftAuroraBg({ palette, core }: BackgroundProps) {
+  const [color1, color2] = useMemo(
+    () => pickColors(palette, core, 2, 0.3),
+    [palette, core],
+  );
+  return (
+    <div className="absolute inset-0">
+      <SoftAurora color1={color1} color2={color2} />
     </div>
   );
 }
@@ -309,5 +377,82 @@ export function SideRaysThumb({ palette, core }: BackgroundProps) {
         }}
       />
     </div>
+  );
+}
+
+export function LetterGlitchThumb({ palette, core }: BackgroundProps) {
+  const [a, b, c] = pickColors(palette, core, 3, 0.3);
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: "#000",
+        backgroundImage: `radial-gradient(${a} 45%, transparent 46%), radial-gradient(${b} 45%, transparent 46%), radial-gradient(${c} 45%, transparent 46%)`,
+        backgroundSize: "12px 14px, 12px 14px, 12px 14px",
+        backgroundPosition: "0 0, 6px 7px, 3px 3px",
+        opacity: 0.85,
+      }}
+    />
+  );
+}
+
+export function OrbThumb({ core }: BackgroundProps) {
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `radial-gradient(circle at 50% 52%, ${core} 0%, transparent 46%), radial-gradient(circle at 50% 52%, transparent 40%, ${core} 47%, transparent 55%)`,
+        filter: "blur(3px)",
+      }}
+    />
+  );
+}
+
+export function DotFieldThumb({ palette, core }: BackgroundProps) {
+  const [from] = pickColors(palette, core, 2, 0.3);
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `radial-gradient(${from} 30%, transparent 32%)`,
+        backgroundSize: "13px 13px",
+        opacity: 0.8,
+      }}
+    />
+  );
+}
+
+export function AuroraThumb({ palette, core }: BackgroundProps) {
+  const [a, b, c] = pickColors(palette, core, 3, 0.3);
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `linear-gradient(90deg, ${a}, ${b}, ${c})`,
+        maskImage:
+          "radial-gradient(120% 60% at 50% 0%, black 30%, transparent 72%)",
+        WebkitMaskImage:
+          "radial-gradient(120% 60% at 50% 0%, black 30%, transparent 72%)",
+        filter: "blur(6px)",
+      }}
+    />
+  );
+}
+
+export function SoftAuroraThumb({ palette, core }: BackgroundProps) {
+  const [a, b] = pickColors(palette, core, 2, 0.3);
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `radial-gradient(ellipse 80% 55% at 30% 40%, ${a}, transparent 70%), radial-gradient(ellipse 80% 55% at 72% 62%, ${b}, transparent 70%)`,
+        filter: "blur(8px)",
+        opacity: 0.9,
+      }}
+    />
   );
 }

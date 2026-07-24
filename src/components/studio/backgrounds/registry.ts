@@ -2,20 +2,30 @@ import { LinearAxis } from "./linear-axis";
 import { RadialMesh } from "./radial-mesh";
 import { RadialMeshDrift } from "./radial-mesh-drift";
 import {
+  AuroraBg,
+  AuroraThumb,
+  DotFieldBg,
+  DotFieldThumb,
   FerrofluidBg,
   FerrofluidThumb,
   FloatingLinesBg,
   FloatingLinesThumb,
+  LetterGlitchBg,
+  LetterGlitchThumb,
   LightfallBg,
   LightfallThumb,
   LightPillarBg,
   LightPillarThumb,
   LiquidEtherBg,
   LiquidEtherThumb,
+  OrbBg,
+  OrbThumb,
   SideRaysBg,
   SideRaysThumb,
   SilkBg,
   SilkThumb,
+  SoftAuroraBg,
+  SoftAuroraThumb,
 } from "./reactbits";
 import type { BackgroundDef } from "./types";
 
@@ -92,6 +102,41 @@ export const BACKGROUNDS: BackgroundDef[] = [
     source: "React Bits",
     Component: SideRaysBg,
     Thumbnail: SideRaysThumb,
+  },
+  {
+    id: "aurora",
+    name: "Aurora",
+    source: "React Bits",
+    Component: AuroraBg,
+    Thumbnail: AuroraThumb,
+  },
+  {
+    id: "soft-aurora",
+    name: "Soft Aurora",
+    source: "React Bits",
+    Component: SoftAuroraBg,
+    Thumbnail: SoftAuroraThumb,
+  },
+  {
+    id: "orb",
+    name: "Orb",
+    source: "React Bits",
+    Component: OrbBg,
+    Thumbnail: OrbThumb,
+  },
+  {
+    id: "dot-field",
+    name: "Dot Field",
+    source: "React Bits",
+    Component: DotFieldBg,
+    Thumbnail: DotFieldThumb,
+  },
+  {
+    id: "letter-glitch",
+    name: "Letter Glitch",
+    source: "React Bits",
+    Component: LetterGlitchBg,
+    Thumbnail: LetterGlitchThumb,
   },
 ];
 

@@ -39,16 +39,22 @@
       "includes": ["src/components/studio/backgrounds/vendor/**"],
       "linter": {
         "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "off"
+          },
           "correctness": {
             "useExhaustiveDependencies": "off",
-            "noUnusedVariables": "off"
+            "noUnusedVariables": "off",
+            "useParseIntRadix": "off"
           },
           "style": {
-            "noNonNullAssertion": "off"
+            "noNonNullAssertion": "off",
+            "useTemplate": "off"
           },
           "suspicious": {
             "noAssignInExpressions": "off",
-            "noExplicitAny": "off"
+            "noExplicitAny": "off",
+            "noImplicitAnyLet": "off"
           },
           "complexity": {
             "noForEach": "off",
