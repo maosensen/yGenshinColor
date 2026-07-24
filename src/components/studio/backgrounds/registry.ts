@@ -30,6 +30,7 @@ import {
   SoftAuroraThumb,
 } from "./reactbits";
 import type { BackgroundDef } from "./types";
+import { WarpGrid, WarpGridThumb } from "./warp-grid";
 
 /**
  * Background preset registry. To add a preset — including ones adapted from
@@ -55,6 +56,13 @@ export const BACKGROUNDS: BackgroundDef[] = [
     name: "Linear Axis",
     source: "Built-in",
     Component: LinearAxis,
+  },
+  {
+    id: "warp-grid",
+    name: "Warp Grid",
+    source: "Built-in",
+    Component: WarpGrid,
+    Thumbnail: WarpGridThumb,
   },
   {
     id: "liquid-ether",
