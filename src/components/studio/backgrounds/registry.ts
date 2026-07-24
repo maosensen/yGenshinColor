@@ -20,6 +20,8 @@ import {
   LiquidEtherThumb,
   OrbBg,
   OrbThumb,
+  RippleGridBg,
+  RippleGridThumb,
   SideRaysBg,
   SideRaysThumb,
   SilkBg,
@@ -137,6 +139,13 @@ export const BACKGROUNDS: BackgroundDef[] = [
     source: "React Bits",
     Component: LetterGlitchBg,
     Thumbnail: LetterGlitchThumb,
+  },
+  {
+    id: "ripple-grid",
+    name: "Ripple Grid",
+    source: "React Bits",
+    Component: RippleGridBg,
+    Thumbnail: RippleGridThumb,
   },
 ];
 

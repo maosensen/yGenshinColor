@@ -12,6 +12,7 @@ import Lightfall from "./vendor/Lightfall";
 import LightPillar from "./vendor/LightPillar";
 import LiquidEther from "./vendor/LiquidEther";
 import Orb from "./vendor/Orb";
+import RippleGrid from "./vendor/RippleGrid";
 import SideRays from "./vendor/SideRays";
 import Silk from "./vendor/Silk";
 import SoftAurora from "./vendor/SoftAurora";
@@ -227,6 +228,20 @@ export function SoftAuroraBg({ palette, core }: BackgroundProps) {
   return (
     <div className="absolute inset-0">
       <SoftAurora color1={color1} color2={color2} />
+    </div>
+  );
+}
+
+export function RippleGridBg({ palette, core }: BackgroundProps) {
+  // Perspective grid in one bright palette color (the core theme voice).
+  // Everything else stays at React Bits' vetted defaults.
+  const [color] = useMemo(
+    () => pickColors(palette, core, 1, 0.45),
+    [palette, core],
+  );
+  return (
+    <div className="absolute inset-0">
+      <RippleGrid gridColor={color} />
     </div>
   );
 }
@@ -452,6 +467,24 @@ export function SoftAuroraThumb({ palette, core }: BackgroundProps) {
         backgroundImage: `radial-gradient(ellipse 80% 55% at 30% 40%, ${a}, transparent 70%), radial-gradient(ellipse 80% 55% at 72% 62%, ${b}, transparent 70%)`,
         filter: "blur(8px)",
         opacity: 0.9,
+      }}
+    />
+  );
+}
+
+export function RippleGridThumb({ palette, core }: BackgroundProps) {
+  const [color] = pickColors(palette, core, 1, 0.45);
+  const mask = "radial-gradient(circle at 50% 58%, black 8%, transparent 70%)";
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundColor: THUMB_BG,
+        backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
+        backgroundSize: "13px 13px",
+        maskImage: mask,
+        WebkitMaskImage: mask,
+        opacity: 0.55,
       }}
     />
   );
