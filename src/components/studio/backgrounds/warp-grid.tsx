@@ -57,14 +57,40 @@ export function WarpGrid({ core }: BackgroundProps) {
     resize();
     window.addEventListener("resize", resize);
 
+    // Focus tracks the cursor when it's over the artboard, easing back to a
+    // slow idle drift once it leaves. Kept as layout-px state so it survives
+    // resizes; the listener is on window so pan/zoom capture can't swallow it.
+    let focusX = w / 2;
+    let focusY = h * 0.46;
+    let pointer: { x: number; y: number } | null = null;
+
+    const onMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const nx = (e.clientX - rect.left) / rect.width;
+      const ny = (e.clientY - rect.top) / rect.height;
+      pointer =
+        nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1
+          ? { x: nx * w, y: ny * h }
+          : null;
+    };
+    window.addEventListener("mousemove", onMove);
+
     const draw = (t: number) => {
       const time = reduce ? 0 : t / 1000;
       const [r, g, b] = hexToRgb(formatHex(coreRef.current) ?? "#88aaff");
       ctx.clearRect(0, 0, w, h);
 
-      // Focus drifts on a slow Lissajous around the upper-middle.
-      const fx = w / 2 + Math.cos(time * 0.18) * w * 0.1;
-      const fy = h * 0.46 + Math.sin(time * 0.23) * h * 0.1;
+      // Target = cursor if over the artboard, else a slow idle Lissajous.
+      const targetX = pointer
+        ? pointer.x
+        : w / 2 + Math.cos(time * 0.18) * w * 0.1;
+      const targetY = pointer
+        ? pointer.y
+        : h * 0.46 + Math.sin(time * 0.23) * h * 0.1;
+      focusX += (targetX - focusX) * 0.09;
+      focusY += (targetY - focusY) * 0.09;
+      const fx = focusX;
+      const fy = focusY;
 
       const cols = Math.ceil(w / SPACING) + 2;
       const rows = Math.ceil(h / SPACING) + 2;
@@ -136,6 +162,7 @@ export function WarpGrid({ core }: BackgroundProps) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMove);
     };
   }, []);
 
