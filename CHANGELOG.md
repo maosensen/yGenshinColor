@@ -6,12 +6,20 @@ project uses [semantic versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-24
+
 ### Added
 
 - **Paper shader backgrounds** — three presets adapted from Paper
   (@paper-design/shaders-react, Apache-2.0): Dot Orbit, Voronoi, and Pulsing
   Border, each mapped to the extracted palette on a transparent ground so the
   artboard backdrop shows through.
+
+### Fixed
+
+- **Warp Grid** — the gravity well now exists only under the cursor: it snaps
+  to the pointer on entry, follows while inside, and vanishes the moment the
+  cursor leaves the artboard (no more idle drift or stranded focus point).
 
 ## [0.3.0] - 2026-07-24
 
@@ -191,7 +199,8 @@ First release — a themeable Next.js dashboard template.
 - **Changelog page** — curated release notes on a timeline at `/changelog`,
   rendered from a typed changelog module.
 
-[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/maosensen/yGenshinColor/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/maosensen/yGenshinColor/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/maosensen/yGenshinColor/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/maosensen/yGenshinColor/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/maosensen/yGenshinColor/releases/tag/v0.2.0

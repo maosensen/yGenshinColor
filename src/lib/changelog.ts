@@ -35,6 +35,25 @@ export type ChangelogRelease = {
 /** Newest first. */
 export const changelog: ChangelogRelease[] = [
   {
+    version: "0.3.1",
+    date: "2026-07-24",
+    title: "Paper shaders join the roster",
+    summary:
+      "Three shader backgrounds from Paper — Dot Orbit, Voronoi, and Pulsing Border — plus a fix so the Warp Grid focus tracks your cursor exactly.",
+    changes: [
+      {
+        kind: "new",
+        title: "Paper shader backgrounds",
+        text: "Dot Orbit, Voronoi, and Pulsing Border join the picker, each painting from your extracted palette over a transparent ground.",
+      },
+      {
+        kind: "fixed",
+        title: "Warp Grid focus",
+        text: "The gravity well now lives only under the cursor — it follows while you hover and disappears the moment you leave the artboard.",
+      },
+    ],
+  },
+  {
     version: "0.3.0",
     date: "2026-07-24",
     title: "The studio becomes a canvas",
